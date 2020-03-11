@@ -1,0 +1,18 @@
+// Create saves a new {{Name}} record into the database
+func (ctrl *{{Name}}Controller) Create(c *gin.Context) {
+	m := models.{{Name}}{}
+	if err := c.ShouldBindJSON(m); err != nil {
+		ctrl.log.Error("invalid {{Name}} creation request",
+			zap.Error(err),
+		)
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	err := m.Insert(ctrl.db, boil.Infer())
+	if err != nil {
+		ctrl.log.Error("error creating {{Name}}",
+			zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+	}
+	c.JSON(http.StatusCreated, gin.H{})
+}

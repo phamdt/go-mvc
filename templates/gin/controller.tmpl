@@ -1,0 +1,21 @@
+package controllers
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
+	"github.com/volatiletech/sqlboiler/boil"
+	"go.uber.org/zap"
+)
+
+// {{Name}}Controller exposes the methods for interacting with the
+// RESTful {{Name}} resource
+type {{Name}}Controller struct {
+	db  *sqlx.DB
+	log *zap.Logger
+}
+
+{{#each Actions}}
+{{{ whichAction Name }}}
+{{/each}}
