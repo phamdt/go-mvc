@@ -1,0 +1,18 @@
+// Delete deletes a new {{Name}} record into the database
+func (ctrl *{{Name}}Controller) Delete(c *gin.Context) {
+	m := models.{{Name}}{}
+	if err := c.ShouldBindUri(&m); err != nil {
+		ctrl.log.Error("invalid {{Name}} deletion request",
+			zap.Error(err),
+		)
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	err := m.Delete(ctrl.db)
+	if err != nil {
+		ctrl.log.Error("error deleting {{Name}}",
+			zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+	}
+	c.JSON(http.StatusOK, gin.H{})
+}
