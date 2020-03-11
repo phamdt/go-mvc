@@ -1,0 +1,10 @@
+// Index returns a list of {{Name}} records
+func (ctrl *{{Name}}Controller) Index(c *gin.Context) {
+	q := c.Request.URL.RawQuery
+	qms := GetQueryModFromQuery(q)
+	results, err := models.{{Name}}(qms...).All(ctrl.db)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+	}
+	c.JSON(http.StatusOK, results)
+}

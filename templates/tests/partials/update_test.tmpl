@@ -1,0 +1,29 @@
+func Test{{name}}Controller_Replace(t *testing.T) {
+	tests := []struct {
+		name           string
+		path           string
+		wantStatusCode int
+	}{
+		{
+			name:           "Test replacing with valid {{name}} as body",
+			path:           "{{path}}",
+			wantStatusCode: 200,
+		},
+		{
+			name:           "Test replacing with empty request body",
+			path:           "{{path}}",
+			wantStatusCode: 400,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			router := GetRouter()
+
+			w := httptest.NewRecorder()
+			req, _ := http.NewRequest("PUT", tt.path, nil)
+			router.ServeHTTP(w, req)
+
+			assert.Equal(t, tt.wantStatusCode, w.Code)
+		})
+	}
+}
