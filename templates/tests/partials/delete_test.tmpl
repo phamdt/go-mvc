@@ -1,0 +1,29 @@
+func Test{{Name}}Controller_Delete(t *testing.T) {
+	tests := []struct {
+		name           string
+		path           string
+		wantStatusCode int
+	}{
+		{
+			name:           "Test deleting",
+			path:           "{{Path}}",
+			wantStatusCode: 200,
+		},
+		{
+			name:           "Test deleting non-existent resource",
+			path:           "{{Path}}",
+			wantStatusCode: 400,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			router := GetRouter()
+
+			w := httptest.NewRecorder()
+			req, _ := http.NewRequest("DELETE", tt.path, nil)
+			router.ServeHTTP(w, req)
+
+			assert.Equal(t, tt.wantStatusCode, w.Code)
+		})
+	}
+}
