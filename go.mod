@@ -1,4 +1,4 @@
-module gomvc
+module github.com/phamdt/go-mvc
 
 go 1.13
 
