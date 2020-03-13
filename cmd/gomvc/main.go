@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gomvc"
+	gomvc "github.com/phamdt/go-mvc"
 	"os"
 
 	"github.com/spf13/pflag"
