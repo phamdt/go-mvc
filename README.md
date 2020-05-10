@@ -31,6 +31,6 @@ An example workflow after creating the application:
 7) Run sqlboiler: `sqlboiler psql`
 8) Run `gomvc resource {{tableName}}` for each of the tables you want to create an endpoint for.
 9) Verify naming conventions align with what sqlboiler generated. You might need to edit the generated controllers.
-10) Continuing dev-ing as you would normally
+10) Continue dev-ing as you would normally
 
 If you're managing your schema independently, you can completely remove the migrate dependency from both your workflow and the app but you can still use sqlboiler regardless.

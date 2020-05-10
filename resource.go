@@ -51,69 +51,11 @@ func methodPartial(ctx interface{}, name string, subDir string) string {
 	name = strings.ToLower(name)
 	box := rice.MustFindBox("templates")
 	tmplDir := fmt.Sprintf("%s/partials/%s.tmpl", subDir, name)
+	log.Println("dt", tmplDir)
 	t := box.MustString(tmplDir)
 	tmpl, err := raymond.Parse(t)
 	if err != nil {
 		panic(err)
 	}
 	return tmpl.MustExec(ctx)
-}
-
-func createControllerFromDefault(controllerData ControllerData, dest string) {
-	box := rice.MustFindBox("templates")
-	tmplString := box.MustString("gin/controller.tmpl")
-	tmpl, err := raymond.Parse(tmplString)
-	if err != nil {
-		panic(err)
-	}
-	testTmplString := box.MustString("tests/controller_test.tpl")
-	testTmpl, err := raymond.Parse(testTmplString)
-	if err != nil {
-		panic(err)
-	}
-	baseCreateController(controllerData, dest, tmpl, testTmpl)
-}
-
-func createControllerFromHandleBars(controllerData ControllerData, templateDir string, dest string) error {
-	// generate controller with controllerData
-	controllerDir := fmt.Sprintf("%s/gin/controller.tmpl", templateDir)
-	tmpl, err := raymond.ParseFile(controllerDir)
-	if err != nil {
-		panic(err)
-	}
-	controllerTestDir := fmt.Sprintf("%s/tests/controller_test.tpl", templateDir)
-	testTmpl, err := raymond.ParseFile(controllerTestDir)
-	if err != nil {
-		panic(err)
-	}
-	return baseCreateController(controllerData, dest, tmpl, testTmpl)
-}
-
-func baseCreateController(controllerData ControllerData, dest string, ctrlTpl, testTpl *raymond.Template) error {
-	raymond.RegisterHelper("whichAction", func(action string) string {
-		log.Println("looking for HTTP action partial", action)
-		return methodPartial(controllerData, action, "gin")
-	})
-	filepath := fmt.Sprintf("%s/%s.go", dest, strings.ToLower(controllerData.Name))
-	result := ctrlTpl.MustExec(controllerData)
-	if err := createFileFromString(filepath, result); err != nil {
-		log.Println("error generating file for", filepath, err.Error())
-		return err
-	}
-
-	routerFilePath := fmt.Sprintf("%s/router.go", dest)
-	AddActionViaAST(controllerData.Actions, routerFilePath, dest)
-
-	// generate controller http tests
-	raymond.RegisterHelper("whichActionTest", func(action string) string {
-		log.Println("looking for HTTP action test partial", action)
-		return methodPartial(controllerData, action+"_test", "tests")
-	})
-	testfilepath := fmt.Sprintf("%s/%s_test.go", dest, strings.ToLower(controllerData.Name))
-	testResult := testTpl.MustExec(controllerData)
-	if err := createFileFromString(testfilepath, testResult); err != nil {
-		log.Println("error generating file for", testfilepath, err.Error())
-		return err
-	}
-	return nil
 }
