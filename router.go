@@ -9,10 +9,8 @@ import (
 	"sort"
 	"strings"
 
-	rice "github.com/GeertJohan/go.rice"
 	"github.com/dave/dst"
 	"github.com/dave/dst/decorator"
-	"github.com/hoisie/mustache"
 )
 
 // CreateRouter creates a router.go file to be used in the controllers directory
@@ -22,16 +20,9 @@ func CreateRouter(data RouteData, relativeTemplatePath, destDir string) {
 			data.Controllers[i].Name,
 			data.Controllers[j].Name) < 1
 	})
-	box := rice.MustFindBox("templates")
-	template, err := box.String(relativeTemplatePath)
-	if err != nil {
-		panic(err)
-	}
-	content := mustache.Render(template, data)
 	outputPath := fmt.Sprintf("%s/router.go", destDir)
-	if err := createFileFromString(outputPath, content); err != nil {
+	if err := createFileFromTemplates(relativeTemplatePath, data, outputPath); err != nil {
 		log.Println("error generating router file for", outputPath, err.Error())
-		return
 	}
 }
 

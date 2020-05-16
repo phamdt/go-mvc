@@ -13,7 +13,6 @@ import (
 
 	rice "github.com/GeertJohan/go.rice"
 	"github.com/GeertJohan/go.rice/embedded"
-	"github.com/hoisie/mustache"
 	"github.com/spf13/cobra"
 )
 
@@ -53,7 +52,12 @@ var Application = &cobra.Command{
 			File{Template: "build/env.tpl", Name: ".env"},
 			File{Template: "build/wait-for-server-start.sh.tpl", Name: ".circleci/wait-for-server-start.sh"},
 		} {
-			createFileFromTemplates(destinationDir, appName, file)
+			data := map[string]string{
+				"Name":      appName,
+				"TitleName": strings.Title(appName),
+			}
+			destPath := fmt.Sprintf("%s/%s", destinationDir, file.Name)
+			createFileFromTemplates(file.Template, data, destPath)
 		}
 		// render files from special gomvc templates with specific template data
 		CreateRouter(RouteData{}, "gin/router.tpl",
@@ -137,21 +141,6 @@ func copyStatic(destinationBasePath string, name string) {
 	box := rice.MustFindBox("static")
 	dest := fmt.Sprintf("%s/%s", destinationBasePath, name)
 	if err := createFileFromString(dest, box.MustString(name)); err != nil {
-		panic(err)
-	}
-}
-
-func createFileFromTemplates(baseDir string, appName string, file File) {
-	box := rice.MustFindBox("templates")
-	tmpl := box.MustString(file.Template)
-	data := map[string]string{
-		"Name":      appName,
-		"TitleName": strings.Title(appName),
-	}
-	r := mustache.Render(tmpl, data)
-	destPath := fmt.Sprintf("%s/%s", baseDir, file.Name)
-	if err := createFileFromString(destPath, r); err != nil {
-		log.Println("could not create file for", destPath)
 		panic(err)
 	}
 }
