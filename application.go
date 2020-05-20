@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 
 	rice "github.com/GeertJohan/go.rice"
@@ -56,12 +57,12 @@ var Application = &cobra.Command{
 				"Name":      appName,
 				"TitleName": strings.Title(appName),
 			}
-			destPath := fmt.Sprintf("%s/%s", destinationDir, file.Name)
+			destPath := filepath.Join(destinationDir, file.Name)
 			createFileFromTemplates(file.Template, data, destPath)
 		}
 		// render files from special gomvc templates with specific template data
-		CreateRouter(RouteData{}, "gin/router.tpl",
-			fmt.Sprintf("%s/%s", destinationDir, "controllers"))
+		ctrlDir := filepath.Join(destinationDir, "controllers")
+		CreateRouter(RouteData{}, "gin/router.tpl", ctrlDir)
 	},
 	PostRun: func(cmd *cobra.Command, args []string) { // this doesn't work for some reason
 		appName := args[0]
@@ -142,7 +143,7 @@ type File struct {
 
 func copyStatic(destinationBasePath string, name string) {
 	box := rice.MustFindBox("static")
-	dest := fmt.Sprintf("%s/%s", destinationBasePath, name)
+	dest := filepath.Join(destinationBasePath, name)
 	if err := createFileFromString(dest, box.MustString(name)); err != nil {
 		panic(err)
 	}

@@ -6,6 +6,7 @@ import (
 	"go/token"
 	"log"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -20,9 +21,9 @@ func CreateRouter(data RouteData, relativeTemplatePath, destDir string) {
 			data.Controllers[i].Name,
 			data.Controllers[j].Name) < 1
 	})
-	outputPath := fmt.Sprintf("%s/router.go", destDir)
+	outputPath := filepath.Join(destDir, "router.go")
 	if err := createFileFromTemplates(relativeTemplatePath, data, outputPath); err != nil {
-		log.Println("error generating router file for", outputPath, err.Error())
+		log.Fatalf("error generating router file for %s %s\n", outputPath, err.Error())
 	}
 }
 
