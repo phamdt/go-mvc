@@ -1,0 +1,33 @@
+func Test{{Name}}Controller_Show(t *testing.T) {
+  tests := []struct {
+    name           string
+    path           string
+    want           []{{Name}}
+    wantStatusCode int
+  }{
+    {
+      name:           "Test getting existing {{Name}}",
+      path:           "{{path}}",
+      want:           {{Name}}{},
+      wantStatusCode: 200,
+    },
+    {
+      name:           "Test getting non-existent {{Name}}",
+      path:           "{{path}}",
+      want:           {{Name}}{},
+      wantStatusCode: 200,
+    },
+  }
+  for _, tt := range tests {
+    t.Run(tt.name, func(t *testing.T) {
+      router := GetRouter()
+
+      w := httptest.NewRecorder()
+      req, _ := http.NewRequest("GET", tt.path, nil)
+      router.ServeHTTP(w, req)
+
+      assert.Equal(t, tt.wantStatusCode, w.Code)
+      assert.Equal(t, tt.want, w.Body.String())
+    })
+  }
+}
