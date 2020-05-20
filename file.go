@@ -13,14 +13,14 @@ import (
 func createFileFromString(filepath string, contents string) error {
 	f, err := os.Create(filepath)
 	if err != nil {
-		return errors.Wrap(err, "os.Create error")
+		return errors.Wrap(err, "createFileFromString: os.Create error")
 	}
 	w := bufio.NewWriter(f)
 	_, err = w.WriteString(contents)
 	w.Flush()
 
 	if err != nil {
-		return errors.Wrap(err, "write string error")
+		return errors.Wrap(err, "createFileFromString: write string error")
 	}
 	return nil
 }

@@ -46,11 +46,11 @@ var Application = &cobra.Command{
 		log.Println("finished copying static files")
 		// render files from generic gomvc templates
 		for _, file := range []File{
-			File{Template: "query.go.tpl", Name: "controllers/query.go"},
-			File{Template: "gin/main.tpl", Name: "main.go"},
-			File{Template: "build/docker-compose.yml.tpl", Name: "docker-compose.yml"},
-			File{Template: "build/env.tpl", Name: ".env"},
-			File{Template: "build/wait-for-server-start.sh.tpl", Name: ".circleci/wait-for-server-start.sh"},
+			{Template: "query.go.tpl", Name: "controllers/query.go"},
+			{Template: "gin/main.tpl", Name: "main.go"},
+			{Template: "build/docker-compose.yml.tpl", Name: "docker-compose.yml"},
+			{Template: "build/env.tpl", Name: ".env"},
+			{Template: "build/wait-for-server-start.sh.tpl", Name: ".circleci/wait-for-server-start.sh"},
 		} {
 			data := map[string]string{
 				"Name":      appName,
@@ -124,7 +124,10 @@ func runCommand(command *exec.Cmd) {
 	if err := command.Start(); err != nil {
 		log.Fatal(err)
 	}
-	slurp, _ := ioutil.ReadAll(stderr)
+	slurp, err := ioutil.ReadAll(stderr)
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Printf("%s", slurp)
 	if err := command.Wait(); err != nil {
 		log.Fatal(err)

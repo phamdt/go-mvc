@@ -51,7 +51,6 @@ func methodPartial(ctx interface{}, name string, subDir string) string {
 	name = strings.ToLower(name)
 	box := rice.MustFindBox("templates")
 	tmplDir := fmt.Sprintf("%s/partials/%s.tmpl", subDir, name)
-	log.Println("dt", tmplDir)
 	t := box.MustString(tmplDir)
 	tmpl, err := raymond.Parse(t)
 	if err != nil {
