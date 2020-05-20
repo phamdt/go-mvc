@@ -2,6 +2,7 @@ package gomvc
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -81,4 +82,8 @@ func dirExists(dir string) bool {
 		return false
 	}
 	return true
+}
+
+func addGoExt(s string) string {
+	return fmt.Sprintf("%s.go", s)
 }

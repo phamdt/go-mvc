@@ -2,6 +2,7 @@ package gomvc
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 )
 
@@ -11,7 +12,7 @@ func NewCRUDActions(name string) []Action {
 		{Resource: name, Name: "Index", Method: "GET"},
 		{Resource: name, Name: "Create", Method: "POST"},
 	} {
-		action.Path = fmt.Sprintf("/%s", strings.ToLower(name))
+		action.Path = filepath.Join(strings.ToLower(name))
 		action.Handler = strings.Title(action.Name)
 		actions = append(actions, action)
 	}

@@ -45,7 +45,7 @@ var OA = &cobra.Command{
 			if config.IsBlacklisted(path) {
 				continue
 			}
-			if err := OACreateControllerFiles(path, pathItem, ctrlDest, templateDir); err != nil {
+			if err := OACreateControllerFiles(path, pathItem, dest, templateDir); err != nil {
 				log.Fatalf("%s: %s", path, err.Error())
 			}
 		}

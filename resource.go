@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	rice "github.com/GeertJohan/go.rice"
@@ -26,7 +27,7 @@ var Resource = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
 		log.Printf("preparing to create a new resource %s\n", name)
-		path := fmt.Sprintf("/%s", name)
+		path := filepath.Join(name)
 		controllerData := ControllerData{
 			Name:       strings.Title(inflection.Singular(name)),
 			PluralName: inflection.Plural(name),
@@ -39,7 +40,7 @@ var Resource = &cobra.Command{
 			if err != nil {
 				panic(err)
 			}
-			dest = fmt.Sprintf("%s/controllers", path)
+			dest = path
 		}
 
 		createControllerFromDefault(controllerData, dest)

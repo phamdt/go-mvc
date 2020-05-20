@@ -16,11 +16,18 @@ type ControllerData struct {
 	PluralName string
 	Path       string
 	Actions    []Action
+	TestPaths  []TestPath
+}
+
+type TestPath struct {
+	Path string
+	Name string
 }
 
 func createControllerFromDefault(controllerData ControllerData, dest string) error {
+	dest = filepath.Join(dest, "controllers")
 	lowerName := strings.ToLower(controllerData.Name)
-	controllerPath := fmt.Sprintf("%s/%s.go", dest, lowerName)
+	controllerPath := filepath.Join(dest, addGoExt(lowerName))
 	helpers := []TemplateHelper{
 		{
 			Name: "whichAction",
@@ -95,7 +102,7 @@ func OACreateControllerFiles(path string, pathItem *openapi3.PathItem, dest stri
 			handler = methodLookup[method]
 		}
 		action := Action{
-			Method: method, Path: path, Handler: handler, Name: handler,
+			Method: method, Path: path, Handler: handler, Name: handler, Resource: name,
 		}
 		data.Actions = append(data.Actions, action)
 	}
