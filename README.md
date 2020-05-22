@@ -7,15 +7,13 @@
 
 In its current state, using gomvc assumes you will do some combination of the following:
 1) use the `gomvc application {{yourAppName}}` command and be done with gomvc
-2) use the above command and then also use `gomvc resource {{someRESTfulResource}}` subsequently
+2) use the `gomvc oa` command in the directory where your openapi.yml file is
+3) use one of the two previous commands and then also use `gomvc resource {{someRESTfulResource}}` subsequently
 
-As of now, using the first command assumes you will want to use the following dependencies:
+As of now, gomvc assumes you will want to use the following dependencies:
 - gin
 - postgres
 - https://github.com/golang-migrate/migrate (will need to be installed by you)
-
-
-As of now, using the second command assumes you will use the following dependencies as part of your workflow:
 - https://github.com/volatiletech/sqlboiler
 
 
