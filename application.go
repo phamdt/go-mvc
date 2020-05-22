@@ -9,11 +9,11 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 
 	rice "github.com/GeertJohan/go.rice"
 	"github.com/GeertJohan/go.rice/embedded"
-	"github.com/hoisie/mustache"
 	"github.com/spf13/cobra"
 )
 
@@ -47,17 +47,22 @@ var Application = &cobra.Command{
 		log.Println("finished copying static files")
 		// render files from generic gomvc templates
 		for _, file := range []File{
-			File{Template: "query.go.tpl", Name: "controllers/query.go"},
-			File{Template: "gin/main.tpl", Name: "main.go"},
-			File{Template: "build/docker-compose.yml.tpl", Name: "docker-compose.yml"},
-			File{Template: "build/env.tpl", Name: ".env"},
-			File{Template: "build/wait-for-server-start.sh.tpl", Name: ".circleci/wait-for-server-start.sh"},
+			{Template: "query.go.tpl", Name: "controllers/query.go"},
+			{Template: "gin/main.tpl", Name: "main.go"},
+			{Template: "build/docker-compose.yml.tpl", Name: "docker-compose.yml"},
+			{Template: "build/env.tpl", Name: ".env"},
+			{Template: "build/wait-for-server-start.sh.tpl", Name: ".circleci/wait-for-server-start.sh"},
 		} {
-			createFileFromTemplates(destinationDir, appName, file)
+			data := map[string]string{
+				"Name":      appName,
+				"TitleName": strings.Title(appName),
+			}
+			destPath := filepath.Join(destinationDir, file.Name)
+			createFileFromTemplates(file.Template, data, destPath)
 		}
 		// render files from special gomvc templates with specific template data
-		CreateRouter(RouteData{}, "gin/router.tpl",
-			fmt.Sprintf("%s/%s", destinationDir, "controllers"))
+		ctrlDir := filepath.Join(destinationDir, "controllers")
+		CreateRouter(RouteData{}, "gin/router.tpl", ctrlDir)
 	},
 	PostRun: func(cmd *cobra.Command, args []string) { // this doesn't work for some reason
 		appName := args[0]
@@ -120,7 +125,10 @@ func runCommand(command *exec.Cmd) {
 	if err := command.Start(); err != nil {
 		log.Fatal(err)
 	}
-	slurp, _ := ioutil.ReadAll(stderr)
+	slurp, err := ioutil.ReadAll(stderr)
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Printf("%s", slurp)
 	if err := command.Wait(); err != nil {
 		log.Fatal(err)
@@ -135,23 +143,8 @@ type File struct {
 
 func copyStatic(destinationBasePath string, name string) {
 	box := rice.MustFindBox("static")
-	dest := fmt.Sprintf("%s/%s", destinationBasePath, name)
+	dest := filepath.Join(destinationBasePath, name)
 	if err := createFileFromString(dest, box.MustString(name)); err != nil {
-		panic(err)
-	}
-}
-
-func createFileFromTemplates(baseDir string, appName string, file File) {
-	box := rice.MustFindBox("templates")
-	tmpl := box.MustString(file.Template)
-	data := map[string]string{
-		"Name":      appName,
-		"TitleName": strings.Title(appName),
-	}
-	r := mustache.Render(tmpl, data)
-	destPath := fmt.Sprintf("%s/%s", baseDir, file.Name)
-	if err := createFileFromString(destPath, r); err != nil {
-		log.Println("could not create file for", destPath)
 		panic(err)
 	}
 }

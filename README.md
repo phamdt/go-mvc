@@ -7,15 +7,13 @@
 
 In its current state, using gomvc assumes you will do some combination of the following:
 1) use the `gomvc application {{yourAppName}}` command and be done with gomvc
-2) use the above command and then also use `gomvc resource {{someRESTfulResource}}` subsequently
+2) use the `gomvc oa` command in the directory where your openapi.yml file is
+3) use one of the two previous commands and then also use `gomvc resource {{someRESTfulResource}}` subsequently
 
-As of now, using the first command assumes you will want to use the following dependencies:
+As of now, gomvc assumes you will want to use the following dependencies:
 - gin
 - postgres
 - https://github.com/golang-migrate/migrate (will need to be installed by you)
-
-
-As of now, using the second command assumes you will use the following dependencies as part of your workflow:
 - https://github.com/volatiletech/sqlboiler
 
 
@@ -31,6 +29,6 @@ An example workflow after creating the application:
 7) Run sqlboiler: `sqlboiler psql`
 8) Run `gomvc resource {{tableName}}` for each of the tables you want to create an endpoint for.
 9) Verify naming conventions align with what sqlboiler generated. You might need to edit the generated controllers.
-10) Continuing dev-ing as you would normally
+10) Continue dev-ing as you would normally
 
 If you're managing your schema independently, you can completely remove the migrate dependency from both your workflow and the app but you can still use sqlboiler regardless.
