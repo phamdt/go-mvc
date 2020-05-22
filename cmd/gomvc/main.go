@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	gomvc "github.com/phamdt/go-mvc"
 	"os"
+
+	gomvc "github.com/phamdt/go-mvc"
 
 	"github.com/spf13/pflag"
 )
@@ -23,6 +24,11 @@ func main() {
 	resourceFlags := gomvc.Resource.Flags()
 	setSharedFlags(resourceFlags)
 
+	root.AddCommand(gomvc.OA)
+	oaFlags := gomvc.OA.Flags()
+	setSharedFlags(oaFlags)
+	oaFlags.StringVarP(&spec, "spec", "s", "./openapi.yml", "OpenAPI spec path")
+
 	if err := root.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -31,7 +37,6 @@ func main() {
 
 func setSharedFlags(flags *pflag.FlagSet) {
 	flags.StringVarP(&dest, "dest", "d", "", "output of generated files")
-	// flags.StringVarP(&spec, "spec", "s", "./openapi.yml", "OpenAPI spec path")
-	// flags.StringVarP(&configDir, "config", "c", "", "GoMVC configuration path")
-	// flags.StringVarP(&templateDir, "template-dir", "t", "", "Custom template path")
+	flags.StringVarP(&configDir, "config", "c", "", "GoMVC configuration path")
+	flags.StringVarP(&templateDir, "templates", "t", "", "Custom template path")
 }
