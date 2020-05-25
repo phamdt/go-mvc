@@ -2,7 +2,7 @@
 func (ctrl *{{Name}}Controller) Index(c *gin.Context) {
 	q := c.Request.URL.RawQuery
 	qms := GetQueryModFromQuery(q)
-	results, err := models.{{Name}}(qms...).All(ctrl.db)
+	results, err := models.{{PluralName}}(qms...).All(ctrl.db)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
