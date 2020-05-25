@@ -1,13 +1,6 @@
 // Show retrieves a new {{Name}} record from the database
 func (ctrl *{{Name}}Controller) Show(c *gin.Context) {
-	m := models.{{Name}}{}
-	if err := c.ShouldBindUri(&m); err != nil {
-		ctrl.log.Error("invalid {{Name}} retrieval request",
-			zap.Error(err),
-		)
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
+	id := c.GetInt("id")
 	result, err := models.Find{{Name}}(id)
 	if err != nil {
 		ctrl.log.Error("error retrieving {{Name}}",

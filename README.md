@@ -1,7 +1,7 @@
 # GO-MVC
 
 ## Installation
-`go get -u github.com/phamdt/go-mvc/cmd/go-mvc`
+`go get -u github.com/phamdt/go-mvc/cmd/gomvc`
 
 ## Development Workflow
 
