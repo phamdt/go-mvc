@@ -1,6 +1,11 @@
 # GO-MVC
 
+## Dependencies
+[goimports](https://godoc.org/golang.org/x/tools/cmd/goimports)
+
 ## Installation
+
+`go get golang.org/x/tools/cmd/goimports`
 `go get -u github.com/phamdt/go-mvc/cmd/gomvc`
 
 ## Development Workflow
