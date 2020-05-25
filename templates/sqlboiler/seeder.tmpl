@@ -1,0 +1,24 @@
+package main
+
+import (
+	"flag"
+  "seeds"
+)
+
+// this seeder creates X number of records for each model
+func main() {
+	configString := fmt.Sprintf("host=%s user=%s dbname=%s password=%s", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_DB"), os.Getenv("POSTGRES_PASSWORD"))
+	db, err := sqlx.Open("postgres", configString)
+  if err != nil {
+    panic(err)
+  }
+
+  ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+  {{#each Models}}
+  if err := seed.Insert{{Name}}(ctx, db, 100); err != nil {
+    panic(err)
+  }
+  {{/each}}
+}

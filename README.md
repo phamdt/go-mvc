@@ -1,5 +1,8 @@
 # GO-MVC
 
+*** Disclaimer ***
+There are no guarantees of API stability until the first major version is released. Think of the current state as an alpha-phase product looking for validation from users about what features make sense and what the best UX is for those features.
+
 ## Dependencies
 [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports)
 

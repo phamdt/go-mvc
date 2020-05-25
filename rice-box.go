@@ -17,9 +17,9 @@ func init() {
 	}
 	file3 := &embedded.EmbeddedFile{
 		Filename:    "Makefile",
-		FileModTime: time.Unix(1590474961, 0),
+		FileModTime: time.Unix(1590506672, 0),
 
-		Content: string("# Go parameters\nGOBUILD=go build\nGOCLEAN=go clean\nGOTEST=go test\nGOGET=go get\n\nall: test build\n\ndev-dependencies:\n\tgo get -u -t github.com/volatiletech/sqlboiler\n\tgo get github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql\n\nbuild: \n\t$(GOBUILD) -tags=jsoniter .\ntest: \n\t$(GOTEST) -v ./...\nstart:\n\tgo build .\n\tgo run main.go"),
+		Content: string(".PHONY: models\n\n# Go parameters\nGOBUILD=go build\nGOCLEAN=go clean\nGOTEST=go test\nGOGET=go get\n\nall: test build\n\ndev-dependencies:\n\tgo get -u -t github.com/volatiletech/sqlboiler\n\tgo get github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql\n\nbuild: \n\t$(GOBUILD) -tags=jsoniter .\n\ntest: \n\t$(GOTEST) -v ./...\n\nstart:\n\tmake build\n\tgo run main.go\n\n# usage: make migration N=tableName\nmigration:\n\tmigrate create -ext sql -dir ./migrations -seq $(N)\n\nmigratedb:\n\tmigrate up\n\ndropdb:\n\tmigrate drop\n\nmodels:\n\tsqlboiler psql --no-tests --no-hooks --no-context\n"),
 	}
 	file4 := &embedded.EmbeddedFile{
 		Filename:    "test.Dockerfile",
@@ -31,7 +31,7 @@ func init() {
 	// define dirs
 	dir1 := &embedded.EmbeddedDir{
 		Filename:   "",
-		DirModTime: time.Unix(1590474961, 0),
+		DirModTime: time.Unix(1590506672, 0),
 		ChildFiles: []*embedded.EmbeddedFile{
 			file2, // "Dockerfile"
 			file3, // "Makefile"
@@ -46,7 +46,7 @@ func init() {
 	// register embeddedBox
 	embedded.RegisterEmbeddedBox(`static`, &embedded.EmbeddedBox{
 		Name: `static`,
-		Time: time.Unix(1590474961, 0),
+		Time: time.Unix(1590506672, 0),
 		Dirs: map[string]*embedded.EmbeddedDir{
 			"": dir1,
 		},
@@ -105,7 +105,7 @@ func init() {
 	}
 	filef := &embedded.EmbeddedFile{
 		Filename:    "gin/main.tpl",
-		FileModTime: time.Unix(1590506067, 0),
+		FileModTime: time.Unix(1590506672, 0),
 
 		Content: string("package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"log\"\n\t\"net/http\"\n\t\"os\"\n\t\"os/signal\"\n\t\"syscall\"\n\t\"time\"\n\t\"{{Name}}/controllers\"\n\n\t\"github.com/gin-gonic/gin\"\n\t\"github.com/jmoiron/sqlx\"\n\t_ \"github.com/lib/pq\" // blank import necessary to use driver\n\tnewrelic \"github.com/newrelic/go-agent\"\n\t\"github.com/newrelic/go-agent/_integrations/nrgin/v1\"\n\t\"go.uber.org/zap\"\n)\n\nfunc main() {\n\t// construct dependencies\n\tlog := zap.NewExample().Sugar()\n\tdefer log.Sync()\n\n\t// setup database\n\tdb, err := newDb()\n\tif err != nil {\n\t\tlog.Fatalf(\"can't initialize database connection: %v\", zap.Error(err))\n\t\treturn\n\t}\n\n\t// setup router and middleware\n\trouter := controllers.GetRouter(log, db)\n\t// Recovery middleware recovers from any panics and writes a 500 if there was one.\n\trouter.Use(gin.Recovery())\n\n\t// setup monitoring only if the license key is set\n\tnrKey := os.Getenv(\"NR_LICENSE_KEY\")\n\tif nrKey != \"\" {\n\t\tnrMiddleware, err := newRelic(nrKey)\n\t\tif err != nil {\n\t\t\tlog.Fatal(\"Unexpected error setting up new relic\", zap.Error(err))\n\t\t\tpanic(err)\n\t\t}\n\t\trouter.Use(nrMiddleware)\n\t}\n\n\tsrv := &http.Server{\n\t\tAddr:    \":8080\",\n\t\tHandler: router,\n\t}\n\n\tgo func() {\n\t\t// service connections\n\t\tif err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {\n\t\t\tlog.Fatalf(\"listen: %s\\n\", zap.Error(err))\n\t\t}\n\t}()\n\n\t// Wait for interrupt signal to gracefully shutdown the server with\n\t// a timeout of 5 seconds.\n\tquit := make(chan os.Signal)\n\t// kill (no param) default send syscall.SIGTERM\n\t// kill -2 is syscall.SIGINT\n\t// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it\n\tsignal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)\n\t<-quit\n\tlog.Info(\"Shutdown Server ...\")\n\n\tctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\n\tdefer cancel()\n\tif err := srv.Shutdown(ctx); err != nil {\n\t\tlog.Fatal(\"Server Shutdown:\", zap.Error(err))\n\t}\n\t// catching ctx.Done(). timeout of 5 seconds.\n\tselect {\n\tcase <-ctx.Done():\n\t\tlog.Info(\"timeout of 5 seconds.\")\n\t}\n\tlog.Info(\"Server exiting\")\n}\n\nfunc newRelic(nrKey string) (gin.HandlerFunc, error) {\n\tcfg := newrelic.NewConfig(os.Getenv(\"APP_NAME\"), nrKey)\n\t// Creates a New Relic Application\n\tapm, err := newrelic.NewApplication(cfg)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn nrgin.Middleware(apm), nil\n}\n\nfunc newDb() (*sqlx.DB, error) {\n\tconfigString := fmt.Sprintf(\"host=%s user=%s dbname=%s password=%s\", os.Getenv(\"POSTGRES_HOST\"), os.Getenv(\"POSTGRES_USER\"), os.Getenv(\"POSTGRES_DB\"), os.Getenv(\"POSTGRES_PASSWORD\"))\n\treturn sqlx.Open(\"postgres\", configString)\n}\n"),
 	}
@@ -151,37 +151,49 @@ func init() {
 
 		Content: string("package controllers\n\nimport (\n\t\"fmt\"\n\t\"net/url\"\n\t\"strconv\"\n\n\t\"github.com/volatiletech/sqlboiler/queries/qm\"\n)\n\n// GetQueryModFromQuery derives db lookups from URI query parameters\nfunc GetQueryModFromQuery(query string) []qm.QueryMod {\n\tvar mods []qm.QueryMod\n\tm, _ := url.ParseQuery(query)\n\tfor k, v := range m {\n\t\tfor _, value := range v {\n\t\t\tif k == \"limit\" {\n\t\t\t\tlimit, err := strconv.Atoi(value)\n\t\t\t\tif err != nil {\n\t\t\t\t\tcontinue\n\t\t\t\t}\n\t\t\t\tmods = append(mods, qm.Limit(limit))\n\t\t\t} else if k == \"from\" {\n\t\t\t\tfrom, err := strconv.Atoi(value)\n\t\t\t\tif err != nil {\n\t\t\t\t\tcontinue\n\t\t\t\t}\n\t\t\t\t// TODO: support order by and ASC/DESC\n\t\t\t\tmods = append(mods, qm.Where(\"id >= ?\", from))\n\t\t\t} else {\n\t\t\t\tclause := fmt.Sprintf(\"%s=?\", k)\n\t\t\t\tmods = append(mods, qm.Where(clause, v))\n\t\t\t}\n\t\t}\n\t}\n\treturn mods\n}\n"),
 	}
+	filep := &embedded.EmbeddedFile{
+		Filename:    "sqlboiler/seed_factory.tmpl",
+		FileModTime: time.Unix(1590506672, 0),
+
+		Content: string("package models\n\nimport (\n\t\"context\"\n\n\t\"github.com/bxcodec/faker\"\n\t\"github.com/jmoiron/sqlx\"\n\t\"github.com/volatiletech/sqlboiler/boil\"\n)\n\n// NewTest{{Name}} is a factory function to create fake/test data\nfunc NewTest{{Name}}() models.{{Name}} {\n  model := models.{{Name}}{}\n  faker.FakeData(&model)\n  return model\n}\n\n// Insert{{Name}} creates fake data for the {{Name}} model and inserts into the \n// database.\nfunc Insert{{Name}}(ctx context.Context, db *sqlx.DB, n int) error {\n  i := 0\n  for i < n {\n    m := NewTest{{Name}}()\n    if err := m.Insert(ctx, db, boil.Infer()); err != nil {\n      return err\n    }\n    i++\n  }\n\n  return nil\n}"),
+	}
 	fileq := &embedded.EmbeddedFile{
+		Filename:    "sqlboiler/seeder.tmpl",
+		FileModTime: time.Unix(1590506672, 0),
+
+		Content: string("package main\n\nimport (\n\t\"flag\"\n  \"seeds\"\n)\n\n// this seeder creates X number of records for each model\nfunc main() {\n\tconfigString := fmt.Sprintf(\"host=%s user=%s dbname=%s password=%s\", os.Getenv(\"POSTGRES_HOST\"), os.Getenv(\"POSTGRES_USER\"), os.Getenv(\"POSTGRES_DB\"), os.Getenv(\"POSTGRES_PASSWORD\"))\n\tdb, err := sqlx.Open(\"postgres\", configString)\n  if err != nil {\n    panic(err)\n  }\n\n  ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\n\tdefer cancel()\n\n  {{#each Models}}\n  if err := seed.Insert{{Name}}(ctx, db, 100); err != nil {\n    panic(err)\n  }\n  {{/each}}\n}\n"),
+	}
+	files := &embedded.EmbeddedFile{
 		Filename:    "tests/controller_test.tpl",
 		FileModTime: time.Unix(1587572809, 0),
 
 		Content: string("package controllers\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n{{#each Actions}}\n{{{ whichActionTest Name }}}\n{{/each}}\n"),
 	}
-	files := &embedded.EmbeddedFile{
+	fileu := &embedded.EmbeddedFile{
 		Filename:    "tests/partials/create_test.tmpl",
 		FileModTime: time.Unix(1587572809, 0),
 
 		Content: string("func Test{{Name}}Controller_Create(t *testing.T) {\n\ttests := []struct {\n\t\tname           string\n\t\tpath           string\n\t\twantStatusCode int\n\t}{\n\t\t{\n\t\t\tname:           \"Test creating with valid {{Name}} as body\",\n\t\t\tpath:           \"{{Path}}\",\n\t\t\twantStatusCode: 201,\n\t\t},\n\t\t{\n\t\t\tname:           \"Test creating with empty request body\",\n\t\t\tpath:           \"{{Path}}\",\n\t\t\twantStatusCode: 400,\n\t\t},\n\t}\n\tfor _, tt := range tests {\n\t\tt.Run(tt.name, func(t *testing.T) {\n\t\t\trouter := GetRouter()\n\n\t\t\tw := httptest.NewRecorder()\n\t\t\treq, _ := http.NewRequest(\"POST\", tt.path, nil)\n\t\t\trouter.ServeHTTP(w, req)\n\n\t\t\tassert.Equal(t, tt.wantStatusCode, w.Code)\n\t\t})\n\t}\n}\n"),
 	}
-	filet := &embedded.EmbeddedFile{
+	filev := &embedded.EmbeddedFile{
 		Filename:    "tests/partials/delete_test.tmpl",
 		FileModTime: time.Unix(1587572809, 0),
 
 		Content: string("func Test{{Name}}Controller_Delete(t *testing.T) {\n\ttests := []struct {\n\t\tname           string\n\t\tpath           string\n\t\twantStatusCode int\n\t}{\n\t\t{\n\t\t\tname:           \"Test deleting\",\n\t\t\tpath:           \"{{Path}}\",\n\t\t\twantStatusCode: 200,\n\t\t},\n\t\t{\n\t\t\tname:           \"Test deleting non-existent resource\",\n\t\t\tpath:           \"{{Path}}\",\n\t\t\twantStatusCode: 400,\n\t\t},\n\t}\n\tfor _, tt := range tests {\n\t\tt.Run(tt.name, func(t *testing.T) {\n\t\t\trouter := GetRouter()\n\n\t\t\tw := httptest.NewRecorder()\n\t\t\treq, _ := http.NewRequest(\"DELETE\", tt.path, nil)\n\t\t\trouter.ServeHTTP(w, req)\n\n\t\t\tassert.Equal(t, tt.wantStatusCode, w.Code)\n\t\t})\n\t}\n}"),
 	}
-	fileu := &embedded.EmbeddedFile{
+	filew := &embedded.EmbeddedFile{
 		Filename:    "tests/partials/index_test.tmpl",
 		FileModTime: time.Unix(1587572809, 0),
 
 		Content: string("func Test{{Name}}Controller_Index(t *testing.T) {\n\ttests := []struct {\n\t\tname           string\n\t\tpath           string\n\t\twant           []{{Name}}\n\t\twantStatusCode int\n\t}{\n\t\t{\n\t\t\tname:           \"Test indexing without query parameters\",\n\t\t\tpath:           \"{{path}}\",\n\t\t\twant:           []{{Name}}{},\n\t\t\twantStatusCode: 200,\n\t\t},\n\t\t{\n\t\t\tname:           \"Test indexing with parameters\",\n\t\t\tpath:           \"{{path}}?page=2\",\n\t\t\twant:           []{{Name}}{},\n\t\t\twantStatusCode: 200,\n\t\t},\n\t}\n\tfor _, tt := range tests {\n\t\tt.Run(tt.name, func(t *testing.T) {\n\t\t\trouter := GetRouter()\n\n\t\t\tw := httptest.NewRecorder()\n\t\t\treq, _ := http.NewRequest(\"GET\", tt.path, nil)\n\t\t\trouter.ServeHTTP(w, req)\n\n\t\t\tassert.Equal(t, tt.wantStatusCode, w.Code)\n\t\t\tassert.Equal(t, tt.want, w.Body.String())\n\t\t})\n\t}\n}\n"),
 	}
-	filev := &embedded.EmbeddedFile{
+	filex := &embedded.EmbeddedFile{
 		Filename:    "tests/partials/show_test.tmpl",
 		FileModTime: time.Unix(1590367972, 0),
 
 		Content: string("func Test{{Name}}Controller_Show(t *testing.T) {\n  tests := []struct {\n    name           string\n    path           string\n    want           []{{Name}}\n    wantStatusCode int\n  }{\n    {\n      name:           \"Test getting existing {{Name}}\",\n      path:           \"{{path}}\",\n      want:           {{Name}}{},\n      wantStatusCode: 200,\n    },\n    {\n      name:           \"Test getting non-existent {{Name}}\",\n      path:           \"{{path}}\",\n      want:           {{Name}}{},\n      wantStatusCode: 200,\n    },\n  }\n  for _, tt := range tests {\n    t.Run(tt.name, func(t *testing.T) {\n      router := GetRouter()\n\n      w := httptest.NewRecorder()\n      req, _ := http.NewRequest(\"GET\", tt.path, nil)\n      router.ServeHTTP(w, req)\n\n      assert.Equal(t, tt.wantStatusCode, w.Code)\n      assert.Equal(t, tt.want, w.Body.String())\n    })\n  }\n}\n"),
 	}
-	filew := &embedded.EmbeddedFile{
+	filey := &embedded.EmbeddedFile{
 		Filename:    "tests/partials/update_test.tmpl",
 		FileModTime: time.Unix(1587572809, 0),
 
@@ -208,7 +220,7 @@ func init() {
 	}
 	dirc := &embedded.EmbeddedDir{
 		Filename:   "gin",
-		DirModTime: time.Unix(1590423714, 0),
+		DirModTime: time.Unix(1590506672, 0),
 		ChildFiles: []*embedded.EmbeddedFile{
 			filed, // "gin/controller.gotmpl"
 			filee, // "gin/controller.tmpl"
@@ -231,29 +243,31 @@ func init() {
 	}
 	dirn := &embedded.EmbeddedDir{
 		Filename:   "sqlboiler",
-		DirModTime: time.Unix(1590474961, 0),
+		DirModTime: time.Unix(1590506672, 0),
 		ChildFiles: []*embedded.EmbeddedFile{
 			fileo, // "sqlboiler/query.go.tpl"
-
-		},
-	}
-	dirp := &embedded.EmbeddedDir{
-		Filename:   "tests",
-		DirModTime: time.Unix(1587572809, 0),
-		ChildFiles: []*embedded.EmbeddedFile{
-			fileq, // "tests/controller_test.tpl"
+			filep, // "sqlboiler/seed_factory.tmpl"
+			fileq, // "sqlboiler/seeder.tmpl"
 
 		},
 	}
 	dirr := &embedded.EmbeddedDir{
+		Filename:   "tests",
+		DirModTime: time.Unix(1587572809, 0),
+		ChildFiles: []*embedded.EmbeddedFile{
+			files, // "tests/controller_test.tpl"
+
+		},
+	}
+	dirt := &embedded.EmbeddedDir{
 		Filename:   "tests/partials",
 		DirModTime: time.Unix(1590367972, 0),
 		ChildFiles: []*embedded.EmbeddedFile{
-			files, // "tests/partials/create_test.tmpl"
-			filet, // "tests/partials/delete_test.tmpl"
-			fileu, // "tests/partials/index_test.tmpl"
-			filev, // "tests/partials/show_test.tmpl"
-			filew, // "tests/partials/update_test.tmpl"
+			fileu, // "tests/partials/create_test.tmpl"
+			filev, // "tests/partials/delete_test.tmpl"
+			filew, // "tests/partials/index_test.tmpl"
+			filex, // "tests/partials/show_test.tmpl"
+			filey, // "tests/partials/update_test.tmpl"
 
 		},
 	}
@@ -263,7 +277,7 @@ func init() {
 		dir6, // "build"
 		dirc, // "gin"
 		dirn, // "sqlboiler"
-		dirp, // "tests"
+		dirr, // "tests"
 
 	}
 	dir6.ChildDirs = []*embedded.EmbeddedDir{}
@@ -273,11 +287,11 @@ func init() {
 	}
 	dirg.ChildDirs = []*embedded.EmbeddedDir{}
 	dirn.ChildDirs = []*embedded.EmbeddedDir{}
-	dirp.ChildDirs = []*embedded.EmbeddedDir{
-		dirr, // "tests/partials"
+	dirr.ChildDirs = []*embedded.EmbeddedDir{
+		dirt, // "tests/partials"
 
 	}
-	dirr.ChildDirs = []*embedded.EmbeddedDir{}
+	dirt.ChildDirs = []*embedded.EmbeddedDir{}
 
 	// register embeddedBox
 	embedded.RegisterEmbeddedBox(`templates`, &embedded.EmbeddedBox{
@@ -289,8 +303,8 @@ func init() {
 			"gin":            dirc,
 			"gin/partials":   dirg,
 			"sqlboiler":      dirn,
-			"tests":          dirp,
-			"tests/partials": dirr,
+			"tests":          dirr,
+			"tests/partials": dirt,
 		},
 		Files: map[string]*embedded.EmbeddedFile{
 			"build/circleciconfig.yml.tpl":       file7,
@@ -308,12 +322,14 @@ func init() {
 			"gin/partials/update.tmpl":           filel,
 			"gin/router.tpl":                     filem,
 			"sqlboiler/query.go.tpl":             fileo,
-			"tests/controller_test.tpl":          fileq,
-			"tests/partials/create_test.tmpl":    files,
-			"tests/partials/delete_test.tmpl":    filet,
-			"tests/partials/index_test.tmpl":     fileu,
-			"tests/partials/show_test.tmpl":      filev,
-			"tests/partials/update_test.tmpl":    filew,
+			"sqlboiler/seed_factory.tmpl":        filep,
+			"sqlboiler/seeder.tmpl":              fileq,
+			"tests/controller_test.tpl":          files,
+			"tests/partials/create_test.tmpl":    fileu,
+			"tests/partials/delete_test.tmpl":    filev,
+			"tests/partials/index_test.tmpl":     filew,
+			"tests/partials/show_test.tmpl":      filex,
+			"tests/partials/update_test.tmpl":    filey,
 		},
 	})
 }
