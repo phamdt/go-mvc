@@ -8,7 +8,7 @@ func (ctrl *{{Name}}Controller) Delete(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	err := m.Delete(ctrl.db)
+	_, err := m.Delete(ctrl.db)
 	if err != nil {
 		ctrl.log.Error("error deleting {{Name}}",
 			zap.Error(err))

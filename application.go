@@ -47,7 +47,7 @@ var Application = &cobra.Command{
 		log.Println("finished copying static files")
 		// render files from generic gomvc templates
 		for _, file := range []File{
-			{Template: "query.go.tpl", Name: "controllers/query.go"},
+			{Template: "sqlboiler/query.go.tpl", Name: "controllers/query.go"},
 			{Template: "gin/main.tpl", Name: "main.go"},
 			{Template: "build/docker-compose.yml.tpl", Name: "docker-compose.yml"},
 			{Template: "build/env.tpl", Name: ".env"},
