@@ -1,0 +1,31 @@
+package models
+
+import (
+	"context"
+
+	"github.com/bxcodec/faker"
+	"github.com/jmoiron/sqlx"
+	"github.com/volatiletech/sqlboiler/boil"
+)
+
+// NewTest{{Name}} is a factory function to create fake/test data
+func NewTest{{Name}}() models.{{Name}} {
+  model := models.{{Name}}{}
+  faker.FakeData(&model)
+  return model
+}
+
+// Insert{{Name}} creates fake data for the {{Name}} model and inserts into the 
+// database.
+func Insert{{Name}}(ctx context.Context, db *sqlx.DB, n int) error {
+  i := 0
+  for i < n {
+    m := NewTest{{Name}}()
+    if err := m.Insert(ctx, db, boil.Infer()); err != nil {
+      return err
+    }
+    i++
+  }
+
+  return nil
+}
