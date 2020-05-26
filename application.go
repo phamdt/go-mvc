@@ -58,7 +58,9 @@ var Application = &cobra.Command{
 				"TitleName": strings.Title(appName),
 			}
 			destPath := filepath.Join(destinationDir, file.Name)
-			createFileFromTemplates(file.Template, data, destPath)
+			if err := createFileFromTemplates(file.Template, data, destPath); err != nil {
+				log.Printf("error creating file for %s: %s\n", file.Name, err.Error())
+			}
 		}
 		// render files from special gomvc templates with specific template data
 		ctrlDir := filepath.Join(destinationDir, "controllers")

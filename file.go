@@ -34,20 +34,6 @@ func createStringFromFile(filePath string) string {
 	return string(content)
 }
 
-// TODO, return error?
-func getFilesFromDir(dir string) []string {
-	fileNames := []string{}
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		log.Fatal(err)
-		return fileNames
-	}
-	for _, file := range files {
-		fileNames = append(fileNames, file.Name())
-	}
-	return fileNames
-}
-
 // Copy the src file to dst. Any existing file will be overwritten and will not
 // copy file attributes.
 // https://stackoverflow.com/questions/21060945/simple-way-to-copy-a-file-in-golang
@@ -73,7 +59,9 @@ func Copy(src, dst string) error {
 
 func createDirIfNotExists(dir string) {
 	if !dirExists(dir) {
-		os.Mkdir(dir, os.ModePerm)
+		if err := os.Mkdir(dir, os.ModePerm); err != nil {
+			panic(err)
+		}
 	}
 }
 
