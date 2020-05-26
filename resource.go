@@ -43,7 +43,9 @@ var Resource = &cobra.Command{
 			dest = path
 		}
 
-		createControllerFromDefault(controllerData, dest)
+		if err := createControllerFromDefault(controllerData, dest); err != nil {
+			panic(err)
+		}
 	},
 }
 

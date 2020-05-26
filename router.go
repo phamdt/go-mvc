@@ -61,9 +61,11 @@ func AddActionViaAST(actions []Action, routerFilePath string, destDir string) {
 	if err := decorator.Fprint(w, f); err != nil {
 		panic(err)
 	}
-	updatedContents := string(w.Bytes())
+	updatedContents := w.String()
 	newFile, _ := os.Create(routerFilePath)
-	newFile.WriteString(updatedContents)
+	if _, err := newFile.WriteString(updatedContents); err != nil {
+		panic(err)
+	}
 }
 
 func NewRouteRegistrationStatement(action Action) *dst.ExprStmt {

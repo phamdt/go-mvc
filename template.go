@@ -2,20 +2,10 @@ package gomvc
 
 import (
 	"log"
-	"os"
-	"path/filepath"
 
 	rice "github.com/GeertJohan/go.rice"
 	"github.com/aymerick/raymond"
 )
-
-func defaultTemplateDir() string {
-	path, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	return filepath.Join(path, "templates")
-}
 
 func createFileFromTemplates(template string, data interface{}, destPath string) error {
 	box := rice.MustFindBox("templates")

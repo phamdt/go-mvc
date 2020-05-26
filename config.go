@@ -42,6 +42,6 @@ func (c *GoMVCConfig) mapBlacklist() {
 }
 
 func (c *GoMVCConfig) IsBlacklisted(path string) bool {
-	ok, _ := c.blacklistMap[path]
+	ok := c.blacklistMap[path]
 	return ok
 }
