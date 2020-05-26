@@ -1,3 +1,5 @@
+.PHONY: models
+
 # Go parameters
 GOBUILD=go build
 GOCLEAN=go clean
@@ -12,8 +14,23 @@ dev-dependencies:
 
 build: 
 	$(GOBUILD) -tags=jsoniter .
+
 test: 
 	$(GOTEST) -v ./...
+
 start:
-	go build .
+	make build
 	go run main.go
+
+# usage: make migration N=tableName
+migration:
+	migrate create -ext sql -dir ./migrations -seq $(N)
+
+migratedb:
+	migrate up
+
+dropdb:
+	migrate drop
+
+models:
+	sqlboiler psql --no-tests --no-hooks --no-context

@@ -29,6 +29,10 @@ func main() {
 	setSharedFlags(oaFlags)
 	oaFlags.StringVarP(&spec, "spec", "s", "./openapi.yml", "OpenAPI spec path")
 
+	root.AddCommand(gomvc.Seed)
+	seedFlags := gomvc.Seed.Flags()
+	setSharedFlags(seedFlags)
+
 	if err := root.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
