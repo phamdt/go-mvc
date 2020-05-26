@@ -89,7 +89,6 @@ func CreateSeedersFromModels(dir string, dest string) error {
 		log.Println("filepath walk error", err)
 		return err
 	}
-	log.Println(len(data.Packages))
 	if len(data.Packages) == 0 {
 		log.Println("No model data found. Exiting.")
 		return nil
