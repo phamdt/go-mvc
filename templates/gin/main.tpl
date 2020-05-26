@@ -27,7 +27,7 @@ func main() {
 	// setup database
 	db, err := newDb()
 	if err != nil {
-		log.Fatalf("can't initalize database connection: %v", zap.Error(err))
+		log.Fatalf("can't initialize database connection: %v", zap.Error(err))
 		return
 	}
 
