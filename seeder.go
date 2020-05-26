@@ -129,7 +129,9 @@ func iterateModels(data *collector.Data, lambda func(s collector.Struct) error) 
 				if !hasAnyTags {
 					continue
 				}
-				lambda(s)
+				if err := lambda(s); err != nil {
+					panic(err)
+				}
 			}
 		}
 	}
