@@ -29,7 +29,7 @@ jobs:
       run: go test -v .
 
     - name: Generate application
-      run: gomvc application test-api
+      run: go run cmd/gomvc/main.go application test-api
 
     - name: Add resource
-      run: gomvc resource gophers
+      run: go run cmd/gomvc/main.go resource gophers
