@@ -1,16 +1,29 @@
-on: [push, pull_request]
-name: Test
+name: Go
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
 jobs:
-  test:
-    runs-on: 1.14.2
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
     steps:
-    - name: Install Go
+
+    - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
-        go-version: 1.14.2
-    - name: Checkout code
+        go-version: ^1.14
+      id: go
+
+    - name: Check out code into the Go module directory
       uses: actions/checkout@v2
-    - name: Build application
-      run: gomvc application api
-    - name: Add resource
-      run: gomvc resource pants
+
+    - name: Build
+      run: go build -v .
+
+    - name: Test
+      run: go test -v .
