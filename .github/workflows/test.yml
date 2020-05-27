@@ -2,9 +2,12 @@ on: [push, pull_request]
 name: Test
 jobs:
   test:
+    runs-on: 1.4.x
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
+      with:
+        go-version: 1.4.x
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Build application
