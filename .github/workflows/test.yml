@@ -31,8 +31,11 @@ jobs:
     - name: Install dependencies
       run: go get golang.org/x/tools/cmd/goimports
 
+    - name: Setup test directory
+      run: mkdir test
+
     - name: Generate application
-      run: go run cmd/gomvc/main.go application test-api
+      run: go run cmd/gomvc/main.go application test-api --dest ./test
 
     - name: Add resource
-      run: go run cmd/gomvc/main.go resource gophers
+      run: go run cmd/gomvc/main.go resource gophers --dest ./test
