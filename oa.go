@@ -8,9 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// OA is the cli command that creates a router and controller functions from an
-// OpenAPI file
-var OA = &cobra.Command{
+var oa = &cobra.Command{
 	Use:   "oa",
 	Short: "Generate controllers from an OpenAPI yml file",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -20,7 +18,7 @@ var OA = &cobra.Command{
 			return
 		}
 		config := NewGoMVCConfig(configDir)
-
+		// TODO: read spec location from config
 		spec, err := cmd.LocalFlags().GetString("spec")
 		if err != nil {
 			log.Println(err.Error())
@@ -28,6 +26,7 @@ var OA = &cobra.Command{
 		}
 		oa3 := LoadWithKin(spec)
 
+		// read intended destination for generation output
 		dest, err := cmd.LocalFlags().GetString("dest")
 		if err != nil {
 			log.Println(err.Error())
@@ -49,6 +48,11 @@ var OA = &cobra.Command{
 				log.Fatalf("%s: %s", path, err.Error())
 			}
 		}
-
 	},
+}
+
+// OA is the cli command that creates a router and controller functions from an
+// OpenAPI file
+func OA() *cobra.Command {
+	return oa
 }
