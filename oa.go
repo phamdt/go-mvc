@@ -18,7 +18,7 @@ var oa = &cobra.Command{
 			return
 		}
 		config := NewGoMVCConfig(configDir)
-
+		// TODO: read spec location from config
 		spec, err := cmd.LocalFlags().GetString("spec")
 		if err != nil {
 			log.Println(err.Error())
@@ -26,6 +26,7 @@ var oa = &cobra.Command{
 		}
 		oa3 := LoadWithKin(spec)
 
+		// read intended destination for generation output
 		dest, err := cmd.LocalFlags().GetString("dest")
 		if err != nil {
 			log.Println(err.Error())

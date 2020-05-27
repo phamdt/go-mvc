@@ -2,7 +2,6 @@ package gomvc
 
 import (
 	"errors"
-	"fmt"
 	"go/build"
 	"io/ioutil"
 	"log"
@@ -101,19 +100,31 @@ func getAppDir(cmd *cobra.Command, appName string) string {
 }
 
 func runGoFmt(appDir string) {
-	command := exec.Command("gofmt", "-w", appDir)
+	command := exec.Command(goRooted("gofmt"), "-w", appDir)
 	runCommand(command)
 	log.Printf("Just ran gofmt subprocess %d, exiting\n", command.Process.Pid)
 }
 
 func runGoImports(appDir string) {
+	command := exec.Command(goPathed("goimports"), "-w", appDir)
+	runCommand(command)
+	log.Printf("Just ran goimports subprocess %d, exiting\n", command.Process.Pid)
+}
+
+func goPathed(name string) string {
 	gopath := os.Getenv("GOPATH")
 	if gopath == "" {
 		gopath = build.Default.GOPATH
 	}
-	command := exec.Command(fmt.Sprintf("%s/bin/goimports", gopath), "-w", appDir)
-	runCommand(command)
-	log.Printf("Just ran goimports subprocess %d, exiting\n", command.Process.Pid)
+	return filepath.Join(gopath, "bin", name)
+}
+
+func goRooted(name string) string {
+	goroot := os.Getenv("GOROOT")
+	if goroot == "" {
+		goroot = build.Default.GOROOT
+	}
+	return filepath.Join(goroot, "bin", name)
 }
 
 // currently can only be used in app dir
