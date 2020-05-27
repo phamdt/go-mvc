@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Set up Go 1.x
+    - name: Set up Go 1.14
       uses: actions/setup-go@v2
       with:
         go-version: ^1.14
@@ -27,3 +27,9 @@ jobs:
 
     - name: Test
       run: go test -v .
+
+    - name: Generate application
+      run: gomvc application test-api
+
+    - name: Add resource
+      run: gomvc resource gophers
