@@ -14,8 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Resource is the cli command that creates new resource
-var Resource = &cobra.Command{
+var resource = &cobra.Command{
 	Use:   "resource",
 	Short: "Generate resource files",
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -47,6 +46,11 @@ var Resource = &cobra.Command{
 			panic(err)
 		}
 	},
+}
+
+// Resource is the cli command that creates new resource
+func Resource() *cobra.Command {
+	return resource
 }
 
 // TODO: support custom templates

@@ -75,6 +75,8 @@ var methodLookup = map[string]string{
 // an OpenAPI file
 func OACreateControllerFiles(path string, pathItem *openapi3.PathItem, dest string, templateDir string) error {
 	name := strcase.ToSnake(pathItem.Summary)
+	name = strings.ToLower(name)
+
 	// skip creating file if we can't find a good name from the doc
 	if name == "" {
 		log.Printf("No summary provided in API, defaulting to deriving name from path %s since we can't identify a name for the resource", path)
