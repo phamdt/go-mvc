@@ -1,6 +1,6 @@
 # GO-MVC
 
-*** Disclaimer ***
+*** **Disclaimer** ***
 There are no guarantees of API stability until the first major version is released. Think of the current state as an alpha-phase product looking for validation from users about what features make sense and what the best UX is for those features.
 
 ## Dependencies
@@ -8,8 +8,10 @@ There are no guarantees of API stability until the first major version is releas
 
 ## Installation
 
-`go get golang.org/x/tools/cmd/goimports`
-`go get -u github.com/phamdt/go-mvc/cmd/gomvc`
+- set up your GOPATH
+- make sure your regular PATH includes the go binary folder e.g. `/whereveryouinstalled/go/bin`
+- `go get golang.org/x/tools/cmd/goimports`
+- `go get -u github.com/phamdt/go-mvc/cmd/gomvc`
 
 ## Development Workflow
 
