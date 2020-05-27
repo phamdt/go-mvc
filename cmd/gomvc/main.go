@@ -44,7 +44,8 @@ func main() {
 }
 
 func setSharedFlags(flags *pflag.FlagSet) {
-	flags.StringVarP(&dest, "dest", "d", "", "output of generated files")
+	cwd, _ := os.Getwd()
+	flags.StringVarP(&dest, "dest", "d", cwd, "output of generated files")
 	flags.StringVarP(&configDir, "config", "c", "", "GoMVC configuration path")
 	flags.StringVarP(&templateDir, "templates", "t", "", "Custom template path")
 }
