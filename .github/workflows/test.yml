@@ -28,6 +28,9 @@ jobs:
     - name: Test
       run: go test -v .
 
+    - name: Install dependencies
+      run: go get golang.org/x/tools/cmd/goimports
+
     - name: Generate application
       run: go run cmd/gomvc/main.go application test-api
 
