@@ -27,18 +27,23 @@ As of now, gomvc assumes you will want to use the following dependencies:
 - https://github.com/volatiletech/sqlboiler
 
 
-An example workflow after creating the application:
-
-1) Design your SQL schema or at least one table
-2) Create a migration per table: `migrate create -ext sql -dir migrations -seq create_users_table`
-3) Fill the migration file with your SQL commands e.g. `CREATE USERS (etc...)`
-4) Migrate your local database: `migrate -database YOUR_DATBASE_URL -path PATH_TO_YOUR_MIGRATIONS up`
-5) Install sqlboiler by running `make dev-dependencies`
-6) Create a sqlboiler configuration per https://github.com/volatiletech/sqlboiler#getting-started (will be automatically done for you in future GO-MVC release)
-7) Start your application so that you have postgres running: `docker-compose up`
-7) Run sqlboiler: `sqlboiler psql`
-8) Run `gomvc resource {{tableName}}` for each of the tables you want to create an endpoint for.
-9) Verify naming conventions align with what sqlboiler generated. You might need to edit the generated controllers.
-10) Continue dev-ing as you would normally
+## Example steps: using sqlboiler
+1. Generate application: `gomvc application api --dest ~/Code/api`
+1. Design your SQL schema or at least one table
+1. Create a migration per table: `migrate create -ext sql -dir migrations -seq create_users_table`
+1. Fill the migration file with your SQL commands e.g. `CREATE USERS (etc...)`
+1. Migrate your local database: `migrate -database YOUR_DATBASE_URL -path PATH_TO_YOUR_MIGRATIONS up`
+1. Install sqlboiler by running `make dev-dependencies`
+1. Create a sqlboiler configuration per https://github.com/volatiletech/sqlboiler#getting-started (will be automatically done for you in future GO-MVC release)
+1. Start your application so that you have postgres running: `docker-compose up`
+1. Run sqlboiler: `sqlboiler psql`
+1. Run `gomvc resource {{tableName}}` for each of the tables you want to create an endpoint for.
+1. Verify naming conventions align with what sqlboiler generated. You might need to edit the generated controllers.
+1. Generate seeder to fill DB with test data (assumes models dir exists in your app directory): `gomvc seed`.
+1. Continue dev-ing as you would normally
 
 If you're managing your schema independently, you can completely remove the migrate dependency from both your workflow and the app but you can still use sqlboiler regardless.
+
+## Example steps: generating application with OpenAPI 3.x spec file
+1. `gomvc application petstore`
+1. `gomvc oa --spec ./petstore.yaml`
