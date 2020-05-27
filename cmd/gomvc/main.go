@@ -15,22 +15,26 @@ var configDir string
 var templateDir string
 
 func main() {
-	root := gomvc.Root
-	root.AddCommand(gomvc.Application)
-	appFlags := gomvc.Application.Flags()
+	root := gomvc.Root()
+	app := gomvc.Application()
+	root.AddCommand(app)
+	appFlags := app.Flags()
 	setSharedFlags(appFlags)
 
-	root.AddCommand(gomvc.Resource)
-	resourceFlags := gomvc.Resource.Flags()
+	r := gomvc.Resource()
+	root.AddCommand(r)
+	resourceFlags := r.Flags()
 	setSharedFlags(resourceFlags)
 
-	root.AddCommand(gomvc.OA)
-	oaFlags := gomvc.OA.Flags()
+	oa := gomvc.OA()
+	root.AddCommand(oa)
+	oaFlags := oa.Flags()
 	setSharedFlags(oaFlags)
 	oaFlags.StringVarP(&spec, "spec", "s", "./openapi.yml", "OpenAPI spec path")
 
-	root.AddCommand(gomvc.Seed)
-	seedFlags := gomvc.Seed.Flags()
+	seed := gomvc.Seed()
+	root.AddCommand(seed)
+	seedFlags := seed.Flags()
 	setSharedFlags(seedFlags)
 
 	if err := root.Execute(); err != nil {

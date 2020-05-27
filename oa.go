@@ -8,9 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// OA is the cli command that creates a router and controller functions from an
-// OpenAPI file
-var OA = &cobra.Command{
+var oa = &cobra.Command{
 	Use:   "oa",
 	Short: "Generate controllers from an OpenAPI yml file",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -49,6 +47,11 @@ var OA = &cobra.Command{
 				log.Fatalf("%s: %s", path, err.Error())
 			}
 		}
-
 	},
+}
+
+// OA is the cli command that creates a router and controller functions from an
+// OpenAPI file
+func OA() *cobra.Command {
+	return oa
 }

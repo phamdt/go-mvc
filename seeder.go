@@ -17,9 +17,7 @@ import (
 	"github.com/Fanatics/toast/collector"
 )
 
-// Seed is the cli command that creates new seeders based on structs in your
-// application's "models" directory
-var Seed = &cobra.Command{
+var seed = &cobra.Command{
 	Use:   "seed",
 	Short: "Generate seed files",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -37,6 +35,12 @@ var Seed = &cobra.Command{
 			panic(err)
 		}
 	},
+}
+
+// Seed is the cli command that creates new seeders based on structs in your
+// application's "models" directory
+func Seed() *cobra.Command {
+	return seed
 }
 
 // CreateSeedCommand creates a single cmd that inserts records for all models

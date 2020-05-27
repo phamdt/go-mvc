@@ -17,8 +17,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Application is the cli command that creates new application
-var Application = &cobra.Command{
+var application = &cobra.Command{
 	Use:   "application",
 	Short: "Generate application files",
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -82,6 +81,11 @@ var Application = &cobra.Command{
 		log.Println("creating go module", appName)
 		createModule(appDir, appName)
 	},
+}
+
+// Application is the cli command that creates new application.
+func Application() *cobra.Command {
+	return application
 }
 
 func getAppDir(cmd *cobra.Command, appName string) string {
