@@ -27,7 +27,7 @@ func CreateRouter(data RouteData, relativeTemplatePath, destDir string) {
 	}
 }
 
-func AddActionViaAST(actions []Action, routerFilePath string, destDir string) {
+func AddActionViaAST(data ControllerData, routerFilePath string, destDir string) {
 	code := createStringFromFile(routerFilePath)
 	f, err := decorator.Parse(code)
 	if err != nil {
@@ -45,10 +45,10 @@ func AddActionViaAST(actions []Action, routerFilePath string, destDir string) {
 	// delete return statement
 	fn.Body.List = fn.Body.List[:numStatements-1]
 
-	controllerStmt := NewControllerStatement(actions[0].Resource)
+	controllerStmt := NewControllerStatement(data.Name)
 	fn.Body.List = append(fn.Body.List, controllerStmt)
 
-	for _, action := range actions {
+	for _, action := range data.Actions {
 		routeStmt := NewRouteRegistrationStatement(action)
 		fn.Body.List = append(fn.Body.List, routeStmt)
 	}

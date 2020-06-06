@@ -25,6 +25,7 @@ func getControllerNameFromPath(path string) string {
 			nonParams = append(nonParams, part)
 		}
 	}
+	// limit name to two nouns
 	lastTwoIndex := len(nonParams) - 2
 	nameIndex := int(math.Max(0, float64(lastTwoIndex)))
 	nonParams = nonParams[nameIndex:]

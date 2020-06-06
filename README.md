@@ -27,7 +27,7 @@ As of now, gomvc assumes you will want to use the following dependencies:
 - https://github.com/volatiletech/sqlboiler
 
 
-## Example steps: using sqlboiler
+### Example steps: using sqlboiler
 1. Generate application: `gomvc application api --dest ~/Code/api`
 1. Design your SQL schema or at least one table
 1. Create a migration per table: `migrate create -ext sql -dir migrations -seq create_users_table`
@@ -44,6 +44,6 @@ As of now, gomvc assumes you will want to use the following dependencies:
 
 If you're managing your schema independently, you can completely remove the migrate dependency from both your workflow and the app but you can still use sqlboiler regardless.
 
-## Example steps: generating application with OpenAPI 3.x spec file
+### Example steps: generating application with OpenAPI 3.x spec file
 1. `gomvc application petstore`
 1. `gomvc oa --spec ./petstore.yaml`
