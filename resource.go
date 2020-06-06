@@ -26,7 +26,7 @@ var resource = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
 		log.Printf("preparing to create a new resource %s\n", name)
-		path := filepath.Join(name)
+		path := filepath.Join("/", name)
 		controllerData := ControllerData{
 			Name:       strings.Title(inflection.Singular(name)),
 			PluralName: inflection.Plural(name),

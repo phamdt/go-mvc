@@ -26,7 +26,7 @@ type TestPath struct {
 
 func createControllerFromDefault(controllerData ControllerData, dest string) error {
 	dest = filepath.Join(dest, "controllers")
-	lowerName := strings.ToLower(controllerData.Name)
+	lowerName := strings.ToLower(strcase.ToSnake(controllerData.Name))
 	controllerPath := filepath.Join(dest, addGoExt(lowerName))
 	helpers := []TemplateHelper{
 		{
@@ -59,7 +59,7 @@ func createControllerFromDefault(controllerData ControllerData, dest string) err
 
 	// register the controller operations in the router
 	routerFilePath := filepath.Join(dest, "router.go")
-	AddActionViaAST(controllerData.Actions, routerFilePath, dest)
+	AddActionViaAST(controllerData, routerFilePath, dest)
 
 	return nil
 }
