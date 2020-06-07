@@ -11,7 +11,7 @@ There are no guarantees of API stability until the first major version is releas
 - set up your GOPATH
 - make sure your regular PATH includes the go binary folder e.g. `/whereveryouinstalled/go/bin`
 - `go get golang.org/x/tools/cmd/goimports`
-- `go get -u github.com/phamdt/go-mvc/cmd/gomvc`
+- `go get -u github.com/go-generation/go-mvc/cmd/gomvc`
 
 ## Development Workflow
 
