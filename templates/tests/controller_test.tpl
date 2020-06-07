@@ -9,5 +9,5 @@ import (
 )
 
 {{#each Actions}}
-{{{ whichActionTest Name }}}
+{{{ whichActionTest Handler }}}
 {{/each}}
