@@ -81,7 +81,7 @@ func NewRouteRegistrationStatement(action Action) *dst.ExprStmt {
 					Value: fmt.Sprintf("\"%s\"", action.Path),
 				},
 				&dst.SelectorExpr{
-					Sel: &dst.Ident{Name: action.Handler},
+					Sel: &dst.Ident{Name: action.Name},
 					X:   &dst.Ident{Name: fmt.Sprintf("%sCtrl", action.Resource)},
 				},
 			},

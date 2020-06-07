@@ -92,19 +92,18 @@ func OACreateControllerFiles(path string, pathItem *openapi3.PathItem, dest stri
 
 	// collect controller methods based on specified HTTP verbs/operations
 	for method, op := range pathItem.Operations() {
-		// i don't remember what this filters
-		if op.OperationID == "" && op.Summary == "" {
-			log.Printf("No operation ID or summary. Excluding operation from the generated %s controller file\n", name)
-			continue
-		}
-		var handler string
-		if isIndex(method, path) {
-			handler = "Index"
+		var handler = getDefaultHandlerName(method, path)
+		var operationName string
+		if op.OperationID == "" {
+			log.Printf("Missing operation ID. Generating default name for handler/operation function in controller %s.\n", name)
+			operationName = handler
 		} else {
-			handler = methodLookup[method]
+			operationName = strings.Title(op.OperationID)
 		}
+
 		action := Action{
-			Method: method, Path: path, Handler: handler, Name: handler, Resource: name,
+			Method: method, Path: path, Handler: handler, Name: operationName,
+			Resource: name,
 		}
 		data.Actions = append(data.Actions, action)
 	}
@@ -114,4 +113,14 @@ func OACreateControllerFiles(path string, pathItem *openapi3.PathItem, dest stri
 	}
 	log.Printf("created controller actions for %s\n", path)
 	return nil
+}
+
+func getDefaultHandlerName(method, path string) string {
+	var handler string
+	if isIndex(method, path) {
+		handler = "Index"
+	} else {
+		handler = methodLookup[method]
+	}
+	return handler
 }
