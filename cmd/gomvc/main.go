@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	gomvc "github.com/phamdt/go-mvc"
+	gomvc "github.com/go-generation/go-mvc"
 
 	"github.com/spf13/pflag"
 )
@@ -31,6 +31,12 @@ func main() {
 	oaFlags := oa.Flags()
 	setSharedFlags(oaFlags)
 	oaFlags.StringVarP(&spec, "spec", "s", "./openapi.yml", "OpenAPI spec path")
+
+	swagger := gomvc.Swagger()
+	root.AddCommand(swagger)
+	swaggerFlags := swagger.Flags()
+	setSharedFlags(swaggerFlags)
+	swaggerFlags.StringVarP(&spec, "spec", "s", "./swagger.yml", "Swagger spec path")
 
 	seed := gomvc.Seed()
 	root.AddCommand(seed)
