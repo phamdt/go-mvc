@@ -162,7 +162,7 @@ type File struct {
 func copyStatic(destinationBasePath string, name string) {
 	box := rice.MustFindBox("static")
 	dest := filepath.Join(destinationBasePath, name)
-	if err := createFileFromString(dest, box.MustString(name)); err != nil {
+	if err := CreateFileFromString(dest, box.MustString(name)); err != nil {
 		panic(err)
 	}
 }

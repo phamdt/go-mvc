@@ -10,6 +10,7 @@ require (
 	github.com/dave/dst v0.24.0
 	github.com/getkin/kin-openapi v0.13.0
 	github.com/ghodss/yaml v1.0.0
+	github.com/hoisie/mustache v0.0.0-20160804235033-6375acf62c69
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/jinzhu/inflection v1.0.0
 	github.com/pkg/errors v0.9.1
