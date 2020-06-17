@@ -1,4 +1,5 @@
 # GO-MVC
+![](https://github.com/go-generation/go-mvc/workflows/test/badge.svg?branch=main)
 
 *** **Disclaimer** ***
 There are no guarantees of API stability until the first major version is released. Think of the current state as an alpha-phase product looking for validation from users about what features make sense and what the best UX is for those features.
