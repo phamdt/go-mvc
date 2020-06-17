@@ -4,32 +4,66 @@
 *** **Disclaimer** ***
 There are no guarantees of API stability until the first major version is released. Think of the current state as an alpha-phase product looking for validation from users about what features make sense and what the best UX is for those features.
 
-## Dependencies
-[goimports](https://godoc.org/golang.org/x/tools/cmd/goimports)
-
 ## Installation
 
 - set up your GOPATH
 - make sure your regular PATH includes the go binary folder e.g. `/whereveryouinstalled/go/bin`
-- `go get golang.org/x/tools/cmd/goimports`
-- `go get -u github.com/go-generation/go-mvc/cmd/gomvc`
+- download dependencies
+```
+go get golang.org/x/tools/cmd/goimports
+```
+- download cli
+```
+go get -u github.com/go-generation/go-mvc/cmd/gomvc
+```
 
-## Development Workflow
+## Commands
 
-In its current state, using gomvc assumes you will do some combination of the following:
-1) use the `gomvc application {{yourAppName}}` command and be done with gomvc
-2) use the `gomvc oa` command in the directory where your openapi.yml file is
-3) use one of the two previous commands and then also use `gomvc resource {{someRESTfulResource}}` subsequently
+  `gomvc application` Generate application files
+  `gomvc help`        Help about any command
+  `gomvc oa`          Generate controllers from an OpenAPI yml file
+  `gomvc resource`    Generate resource files
+  `gomvc seed`        Generate seed files
+  `gomvc swagger`     Generate controllers from a v2 Swagger yml file
 
+## Usage
+
+Create an application:
+```
+$ mkdir yourapplication && cd yourapplication
+$ gomvc application yourapplication
+```
+
+Optionally create controllers from your OpenAPI or Swagger 2.0 yaml spec (json support is coming):
+```
+$ gomvc oa --spec path/to/openapi.yml
+```
+or
+
+```
+$ gomvc swagger --spec path/to/swagger.yml
+```
+
+Create more resources:
+```
+$ gomvc resource dogs
+```
+
+## Swagger vs OpenAPI Disclaimer
+For ease of parsing, the `gomvc swagger` command currently converts the Swagger spec into an OpenAPI 3 spec. This is done by an underlying library gomvc uses which attempts to convert backwards compatible aspects of the spec. As such there may be some side effects or ignored properties. For example, a Swagger spec lists its reused parameters in a top level section called "parameters". In OA3, everything is nested under the "components" section. When resolving object/schema refs, you may find missing elements because it will try to look for parameters under "#/components/parameters" and not #/parameters". 
+
+## Generated Application Dependencies
 As of now, gomvc assumes you will want to use the following dependencies:
 - gin
 - postgres
+- zap
+- new relic agent
 - https://github.com/golang-migrate/migrate (will need to be installed by you)
 - https://github.com/volatiletech/sqlboiler
 
 
 ### Example steps: using sqlboiler
-1. Generate application: `gomvc application api --dest ~/Code/api`
+1. Generate application: `gomvc application petstore --dest ~/Code/petstore`
 1. Design your SQL schema or at least one table
 1. Create a migration per table: `migrate create -ext sql -dir migrations -seq create_users_table`
 1. Fill the migration file with your SQL commands e.g. `CREATE USERS (etc...)`
@@ -45,6 +79,3 @@ As of now, gomvc assumes you will want to use the following dependencies:
 
 If you're managing your schema independently, you can completely remove the migrate dependency from both your workflow and the app but you can still use sqlboiler regardless.
 
-### Example steps: generating application with OpenAPI 3.x spec file
-1. `gomvc application petstore`
-1. `gomvc oa --spec ./petstore.yaml`
