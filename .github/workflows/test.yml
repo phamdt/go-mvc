@@ -10,7 +10,13 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        # Locked at https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+        os:
+        - ubuntu-18.04
+        - windows-2019
     steps:
 
     - name: Set up Go 1.14
@@ -26,7 +32,7 @@ jobs:
       run: go build -v .
 
     - name: Test
-      run: go test -v .
+      run: go test -v ./...
 
     - name: Install dependencies
       run: go get golang.org/x/tools/cmd/goimports
