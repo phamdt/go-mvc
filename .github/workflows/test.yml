@@ -17,6 +17,7 @@ jobs:
         os:
         - ubuntu-18.04
         - windows-2019
+    runs-on: ${{ matrix.os }}
     steps:
 
     - name: Set up Go 1.14
