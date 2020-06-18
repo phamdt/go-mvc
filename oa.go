@@ -13,26 +13,27 @@ var oa = &cobra.Command{
 	Use:   "oa",
 	Short: "Generate controllers from an OpenAPI yml file",
 	Run: func(cmd *cobra.Command, args []string) {
-		configDir, err := cmd.LocalFlags().GetString("config")
+		flags := cmd.LocalFlags()
+		configDir, err := flags.GetString("config")
 		if err != nil {
 			log.Println(err.Error())
 			return
 		}
 		// TODO: read spec location from config
-		specPath, err := cmd.LocalFlags().GetString("spec")
+		specPath, err := flags.GetString("spec")
 		if err != nil {
 			log.Println(err.Error())
 			return
 		}
 
 		// read intended destination for generation output
-		destDir, err := cmd.LocalFlags().GetString("dest")
+		destDir, err := flags.GetString("dest")
 		if err != nil {
 			log.Println(err.Error())
 			return
 		}
 
-		templateDir, err := cmd.LocalFlags().GetString("templates")
+		templateDir, err := flags.GetString("templates")
 		if err != nil {
 			log.Println(err.Error())
 			return
@@ -42,6 +43,7 @@ var oa = &cobra.Command{
 	},
 }
 
+// GenerateFromOA is the primary logic for the oa command, creating controllers
 func GenerateFromOA(oa3 *openapi3.Swagger, dest, templateDir, configDir string) {
 	config := NewGoMVCConfig(configDir)
 
@@ -50,13 +52,14 @@ func GenerateFromOA(oa3 *openapi3.Swagger, dest, templateDir, configDir string) 
 	createDirIfNotExists(ctrlDest)
 
 	CreateRouter(RouteData{}, "gin/router.tpl", ctrlDest)
+	g := NewGenerator(oa3)
 	for path, pathItem := range oa3.Paths {
 		path = strings.Trim(path, " ")
 		log.Printf("examining path, %s\n", path)
 		if config.IsBlacklisted(path) {
 			continue
 		}
-		if err := OACreateControllerFiles(path, pathItem, dest, templateDir); err != nil {
+		if err := g.CreateControllerFiles(path, pathItem, dest, templateDir); err != nil {
 			log.Fatalf("%s: %s", path, err.Error())
 		}
 	}

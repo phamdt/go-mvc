@@ -1,6 +1,6 @@
 module github.com/go-generation/go-mvc
 
-go 1.13
+go 1.14
 
 require (
 	github.com/Fanatics/toast v0.0.1
@@ -15,5 +15,5 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5 // indirect
-	golang.org/x/tools v0.0.0-20200606014950-c42cb6316fb6 // indirect
+	golang.org/x/tools v0.0.0-20200617042924-7f3f4b10a808 // indirect
 )

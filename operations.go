@@ -41,3 +41,23 @@ func hasPathParameter(s string) bool {
 	// if it's a param it'll have the format `{paramName}`
 	return strings.HasSuffix(s, "}")
 }
+
+var methodLookup = map[string]string{
+	"GET":    "Show",
+	"POST":   "Create",
+	"PUT":    "Update",
+	"DELETE": "Delete",
+}
+
+func getDefaultHandlerName(method, path string) string {
+	var handler string
+	// index is a special case because currently, all of the HTTP verbs have a 1
+	// to 1 relationship with an action except for Index and Show which both use
+	// GET.
+	if isIndex(method, path) {
+		handler = "Index"
+	} else {
+		handler = methodLookup[method]
+	}
+	return handler
+}

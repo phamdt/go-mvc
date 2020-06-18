@@ -6,17 +6,16 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/iancoleman/strcase"
-	"github.com/jinzhu/inflection"
 )
 
 type ControllerData struct {
-	Name       string
-	PluralName string
-	Path       string
-	Actions    []Action
-	TestPaths  []TestPath
+	Name           string
+	PluralName     string
+	Path           string
+	Actions        []Action
+	TestPaths      []TestPath
+	ErrorResponses []Response
 }
 
 type TestPath struct {
@@ -62,65 +61,4 @@ func createControllerFromDefault(controllerData ControllerData, dest string) err
 	AddActionViaAST(controllerData, routerFilePath, dest)
 
 	return nil
-}
-
-var methodLookup = map[string]string{
-	"GET":    "Show",
-	"POST":   "Create",
-	"PUT":    "Update",
-	"DELETE": "Delete",
-}
-
-// OACreateControllerFiles creates a controller for operations found in
-// an OpenAPI file
-func OACreateControllerFiles(path string, pathItem *openapi3.PathItem, dest string, templateDir string) error {
-	name := strcase.ToSnake(pathItem.Summary)
-	name = strings.ToLower(name)
-
-	// skip creating file if we can't find a good name from the doc
-	if name == "" {
-		log.Printf("No summary provided in API, defaulting to deriving name from path %s since we can't identify a name for the resource", path)
-		name = getControllerNameFromPath(path)
-	}
-	log.Printf("Preparing to generate controller files for %s %s", name, path)
-	data := ControllerData{
-		Name:       name,
-		PluralName: inflection.Plural(name),
-		Path:       path,
-		Actions:    []Action{},
-	}
-
-	// collect controller methods based on specified HTTP verbs/operations
-	for method, op := range pathItem.Operations() {
-		var handler = getDefaultHandlerName(method, path)
-		var operationName string
-		if op.OperationID == "" {
-			log.Printf("Missing operation ID. Generating default name for handler/operation function in controller %s.\n", name)
-			operationName = handler
-		} else {
-			operationName = strings.Title(op.OperationID)
-		}
-
-		action := Action{
-			Method: method, Path: path, Handler: handler, Name: operationName,
-			Resource: name,
-		}
-		data.Actions = append(data.Actions, action)
-	}
-
-	if err := createControllerFromDefault(data, dest); err != nil {
-		return err
-	}
-	log.Printf("created controller actions for %s\n", path)
-	return nil
-}
-
-func getDefaultHandlerName(method, path string) string {
-	var handler string
-	if isIndex(method, path) {
-		handler = "Index"
-	} else {
-		handler = methodLookup[method]
-	}
-	return handler
 }

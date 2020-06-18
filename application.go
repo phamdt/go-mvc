@@ -43,6 +43,7 @@ var application = &cobra.Command{
 			copyStatic(destinationDir, filename)
 		}
 		log.Println("finished copying static files")
+		// TODO: extract and allow configuration that would filter static files: e.g. not using sqlboiler
 		// render files from generic gomvc templates
 		for _, file := range []File{
 			{Template: "sqlboiler/query.go.tpl", Name: "controllers/query.go"},
