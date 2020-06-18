@@ -19,12 +19,12 @@ go get -u github.com/go-generation/go-mvc/cmd/gomvc
 
 ## Commands
 
-  `gomvc application` Generate application files
-  `gomvc help`        Help about any command
-  `gomvc oa`          Generate controllers from an OpenAPI yml file
-  `gomvc resource`    Generate resource files
-  `gomvc seed`        Generate seed files
-  `gomvc swagger`     Generate controllers from a v2 Swagger yml file
+  - `gomvc application` Generate application files
+  - `gomvc help`        Help about any command
+  - `gomvc oa`          Generate controllers from an OpenAPI yml file
+  - `gomvc resource`    Generate resource files
+  - `gomvc seed`        Generate seed files
+  - `gomvc swagger`     Generate controllers from a v2 Swagger yml file
 
 ## Usage
 
