@@ -19,3 +19,12 @@ type {{Name}}Controller struct {
 {{#each Actions}}
 {{{ whichAction Handler }}}
 {{/each}}
+
+{{#each ErrorResponses}}
+func (ctrl *{{../Name}}Controller) is{{Name}}(c *gin.Context) bool {
+	// TODO: Add your controller-specific logic for determining if the request 
+	// should return a {{Name}} response with status code {{Code}} as
+	// found in your spec: {{Ref}}
+	return false
+}
+{{/each}}

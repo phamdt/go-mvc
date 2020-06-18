@@ -15,6 +15,7 @@ func createFileFromTemplates(template string, data interface{}, destPath string)
 		return err
 	}
 	r := tmpl.MustExec(data)
+	// TODO: remove this helper which isn't always relevant
 	tmpl.RegisterHelper("whichAction", func(action string) string {
 		log.Println("looking for HTTP action partial", action)
 		if action == "" {

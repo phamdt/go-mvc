@@ -14,6 +14,10 @@ import (
 	"github.com/dave/dst/decorator"
 )
 
+type RouteData struct {
+	Controllers []ControllerData `json:"controllers,omitempty"`
+}
+
 // CreateRouter creates a router.go file to be used in the controllers directory
 func CreateRouter(data RouteData, relativeTemplatePath, destDir string) {
 	sort.Slice(data.Controllers, func(i, j int) bool {

@@ -10,11 +10,12 @@ import (
 )
 
 type ControllerData struct {
-	Name       string
-	PluralName string
-	Path       string
-	Actions    []Action
-	TestPaths  []TestPath
+	Name           string
+	PluralName     string
+	Path           string
+	Actions        []Action
+	TestPaths      []TestPath
+	ErrorResponses []Response
 }
 
 type TestPath struct {
