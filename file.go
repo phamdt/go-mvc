@@ -24,19 +24,19 @@ func createContentsFromTemplate(tmplPath string, data interface{}) string {
 	return result
 }
 
-// createFileFromString takes a filepath as the destination of the file
+// CreateFileFromString takes a filepath as the destination of the file
 // to be created as well as the contents to be written to this file.
-func createFileFromString(filepath string, contents string) error {
+func CreateFileFromString(filepath string, contents string) error {
 	f, err := os.Create(filepath)
 	if err != nil {
-		return errors.Wrap(err, "createFileFromString: os.Create error")
+		return errors.Wrap(err, "CreateFileFromString: os.Create error")
 	}
 	w := bufio.NewWriter(f)
 	_, err = w.WriteString(contents)
 	w.Flush()
 
 	if err != nil {
-		return errors.Wrap(err, "createFileFromString: write string error")
+		return errors.Wrap(err, "CreateFileFromString: write string error")
 	}
 	return nil
 }

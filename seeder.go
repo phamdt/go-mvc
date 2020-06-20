@@ -65,7 +65,7 @@ func CreateSeedCommand(dest string) error {
 	commandDir := filepath.Join(dest, "cmd/seed")
 	createDirIfNotExists(commandDir)
 	fileName := filepath.Join(commandDir, "main.go")
-	return createFileFromString(fileName, content)
+	return CreateFileFromString(fileName, content)
 }
 
 // CreateSeederWithName creates a file with a single function. This function
@@ -82,7 +82,7 @@ func CreateSeederWithName(structName string, destDir string) error {
 	name := strcase.ToCamel(structName)
 	data := map[string]string{"Name": name}
 	contents := createContentsFromTemplate("sqlboiler/seed.tmpl", data)
-	return createFileFromString(dest, contents)
+	return CreateFileFromString(dest, contents)
 }
 
 // CreateSeedersFromModels iterates through the given directory

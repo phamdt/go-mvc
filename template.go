@@ -24,7 +24,7 @@ func createFileFromTemplates(template string, data interface{}, destPath string)
 		}
 		return methodPartial(data, action, "gin")
 	})
-	if err := createFileFromString(destPath, r); err != nil {
+	if err := CreateFileFromString(destPath, r); err != nil {
 		log.Println("could not create file for", destPath)
 		return err
 	}
@@ -47,7 +47,7 @@ func createFileWithHelpers(template string, data interface{}, destPath string, h
 		tmpl.RegisterHelper(helper.Name, helper.Function)
 	}
 	r := tmpl.MustExec(data)
-	if err := createFileFromString(destPath, r); err != nil {
+	if err := CreateFileFromString(destPath, r); err != nil {
 		log.Println("could not create file for", destPath)
 		return err
 	}
