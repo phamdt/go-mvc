@@ -32,6 +32,8 @@ var resource = &cobra.Command{
 			dest = dir
 		}
 
+		orm, _ := cmd.LocalFlags().GetString("orm")
+
 		name := args[0]
 		log.Printf("preparing to create a new resource %s\n", name)
 		path := filepath.Join("/", strings.ToLower(name))
@@ -40,6 +42,7 @@ var resource = &cobra.Command{
 			PluralName: inflection.Plural(name),
 			Path:       path,
 			Actions:    NewCRUDActions(name),
+			ORM:        orm,
 		}
 
 		if err := createControllerFromDefault(controllerData, dest); err != nil {
