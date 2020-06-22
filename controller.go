@@ -16,6 +16,7 @@ type ControllerData struct {
 	Actions        []Action
 	TestPaths      []TestPath
 	ErrorResponses []Response
+	ORM            string
 }
 
 type TestPath struct {
