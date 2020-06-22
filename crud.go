@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -18,7 +16,11 @@ func NewCRUDActions(name string) []Action {
 		{Resource: name, Name: "Index", Method: "GET"},
 		{Resource: name, Name: "Create", Method: "POST"},
 	} {
-		action.Path = filepath.Join(string(os.PathSeparator), strings.ToLower(name))
+		if strings.HasPrefix(name, "/") {
+			action.Path = strings.ToLower(name)
+		} else {
+			action.Path = "/" + strings.ToLower(name)
+		}
 		action.Handler = strings.Title(action.Name)
 		actions = append(actions, action)
 	}
