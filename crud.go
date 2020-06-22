@@ -91,7 +91,7 @@ func resolveSchemaName(schema *openapi3.SchemaRef) string {
 	return getComponentName(schema.Ref)
 }
 
-func printJSON(v interface{}) {
+func PrintJSON(v interface{}) {
 	b, _ := json.MarshalIndent(v, "", "\t")
 	log.Println(string(b))
 }
