@@ -2,14 +2,11 @@ package gomvc
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
-	rice "github.com/GeertJohan/go.rice"
-	"github.com/aymerick/raymond"
 	"github.com/jinzhu/inflection"
 	"github.com/spf13/cobra"
 )
@@ -24,6 +21,17 @@ var resource = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		dest, _ := cmd.LocalFlags().GetString("dest")
+		// if no destination path is provided, assume that generation happens in
+		// the current directory
+		if dest == "" {
+			dir, err := os.Getwd()
+			if err != nil {
+				panic(err)
+			}
+			dest = dir
+		}
+
 		name := args[0]
 		log.Printf("preparing to create a new resource %s\n", name)
 		path := filepath.Join("/", strings.ToLower(name))
@@ -32,14 +40,6 @@ var resource = &cobra.Command{
 			PluralName: inflection.Plural(name),
 			Path:       path,
 			Actions:    NewCRUDActions(name),
-		}
-		dest, _ := cmd.LocalFlags().GetString("dest")
-		if dest == "" {
-			path, err := os.Getwd()
-			if err != nil {
-				panic(err)
-			}
-			dest = path
 		}
 
 		if err := createControllerFromDefault(controllerData, dest); err != nil {
@@ -51,17 +51,4 @@ var resource = &cobra.Command{
 // Resource is the cli command that creates new resource
 func Resource() *cobra.Command {
 	return resource
-}
-
-// TODO: support custom templates
-func methodPartial(ctx interface{}, name string, subDir string) string {
-	name = strings.ToLower(name)
-	box := rice.MustFindBox("templates")
-	tmplDir := fmt.Sprintf("%s/partials/%s.tmpl", subDir, name)
-	t := box.MustString(tmplDir)
-	tmpl, err := raymond.Parse(t)
-	if err != nil {
-		panic(err)
-	}
-	return tmpl.MustExec(ctx)
 }

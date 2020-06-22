@@ -1,10 +1,13 @@
 // Index returns a list of {{Name}} records
 func (ctrl *{{Name}}Controller) Index(c *gin.Context) {
+	var results []model.{{Name}}
+	{{# ORM }}
 	q := c.Request.URL.RawQuery
 	qms := GetQueryModFromQuery(q)
 	results, err := models.{{PluralName}}(qms...).All(ctrl.db)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
+	{{/ ORM }}
 	c.JSON(http.StatusOK, results)
 }

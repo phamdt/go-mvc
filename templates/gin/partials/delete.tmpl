@@ -8,11 +8,13 @@ func (ctrl *{{Name}}Controller) Delete(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+	{{# ORM }}
 	_, err := m.Delete(ctrl.db)
 	if err != nil {
 		ctrl.log.Error("error deleting {{Name}}",
 			zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
-	c.JSON(http.StatusOK, gin.H{})
+	{{/ ORM }}
+	c.JSON(http.StatusNoContent, gin.H{})
 }

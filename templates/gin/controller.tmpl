@@ -5,7 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
+	{{# ORM }}
 	"github.com/volatiletech/sqlboiler/boil"
+	{{/ ORM }}
 	"go.uber.org/zap"
 )
 
