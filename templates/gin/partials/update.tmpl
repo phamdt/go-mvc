@@ -15,11 +15,13 @@ func (ctrl *{{Name}}Controller) Update(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+	{{# ORM }}
 	err := m.Update(ctrl.db, boil.Infer())
 	if err != nil {
 		ctrl.log.Error("error updating {{Name}}",
 			zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
+	{{/ ORM }}
 	c.JSON(http.StatusOK, gin.H{})
 }
