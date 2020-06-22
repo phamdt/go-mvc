@@ -8,11 +8,13 @@ func (ctrl *{{Name}}Controller) Create(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+	{{# ORM }}
 	err := m.Insert(ctrl.db, boil.Infer())
 	if err != nil {
 		ctrl.log.Error("error creating {{Name}}",
 			zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
+	{{/ ORM }}
 	c.JSON(http.StatusCreated, gin.H{})
 }
