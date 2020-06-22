@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -13,8 +14,8 @@ import (
 func NewCRUDActions(name string) []Action {
 	actions := []Action{}
 	for _, action := range []Action{
-		{Resource: name, Name: "Index", Method: "GET"},
-		{Resource: name, Name: "Create", Method: "POST"},
+		{Resource: name, Name: "Index", Method: http.MethodGet},
+		{Resource: name, Name: "Create", Method: http.MethodPost},
 	} {
 		if strings.HasPrefix(name, "/") {
 			action.Path = strings.ToLower(name)
@@ -26,9 +27,9 @@ func NewCRUDActions(name string) []Action {
 	}
 
 	for _, detailAction := range []Action{
-		{Resource: name, Name: "Show", Method: "GET"},
-		{Resource: name, Name: "Update", Method: "PUT"},
-		{Resource: name, Name: "Delete", Method: "DELETE"},
+		{Resource: name, Name: "Show", Method: http.MethodGet},
+		{Resource: name, Name: "Update", Method: http.MethodPut},
+		{Resource: name, Name: "Delete", Method: http.MethodDelete},
 	} {
 		detailAction.Path = fmt.Sprintf("/%s/:id", strings.ToLower(name))
 		detailAction.Handler = strings.Title(detailAction.Name)
