@@ -1,7 +1,9 @@
 package gomvc
 
 import (
+	"fmt"
 	"log"
+	"strings"
 
 	rice "github.com/GeertJohan/go.rice"
 	"github.com/aymerick/raymond"
@@ -29,6 +31,19 @@ func createFileFromTemplates(template string, data interface{}, destPath string)
 		return err
 	}
 	return nil
+}
+
+// TODO: support custom templates
+func methodPartial(ctx interface{}, name string, subDir string) string {
+	name = strings.ToLower(name)
+	box := rice.MustFindBox("templates")
+	tmplDir := fmt.Sprintf("%s/partials/%s.tmpl", subDir, name)
+	t := box.MustString(tmplDir)
+	tmpl, err := raymond.Parse(t)
+	if err != nil {
+		panic(err)
+	}
+	return tmpl.MustExec(ctx)
 }
 
 type TemplateHelper struct {

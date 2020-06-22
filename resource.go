@@ -2,14 +2,11 @@ package gomvc
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
-	rice "github.com/GeertJohan/go.rice"
-	"github.com/aymerick/raymond"
 	"github.com/jinzhu/inflection"
 	"github.com/spf13/cobra"
 )
@@ -51,17 +48,4 @@ var resource = &cobra.Command{
 // Resource is the cli command that creates new resource
 func Resource() *cobra.Command {
 	return resource
-}
-
-// TODO: support custom templates
-func methodPartial(ctx interface{}, name string, subDir string) string {
-	name = strings.ToLower(name)
-	box := rice.MustFindBox("templates")
-	tmplDir := fmt.Sprintf("%s/partials/%s.tmpl", subDir, name)
-	t := box.MustString(tmplDir)
-	tmpl, err := raymond.Parse(t)
-	if err != nil {
-		panic(err)
-	}
-	return tmpl.MustExec(ctx)
 }
