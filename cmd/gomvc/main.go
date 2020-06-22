@@ -9,22 +9,26 @@ import (
 	"github.com/spf13/pflag"
 )
 
+// shared flags
 var dest string
 var spec string
 var configDir string
 var templateDir string
 
+// db flags
+var orm string
+
 func main() {
 	root := gomvc.Root()
+
 	app := gomvc.Application()
 	root.AddCommand(app)
-	appFlags := app.Flags()
-	setSharedFlags(appFlags)
+	setSharedFlags(app.Flags())
 
 	r := gomvc.Resource()
 	root.AddCommand(r)
-	resourceFlags := r.Flags()
-	setSharedFlags(resourceFlags)
+	setSharedFlags(r.Flags())
+	r.Flags().StringVarP(&orm, "orm", "o", "", "database access strategy")
 
 	oa := gomvc.OA()
 	root.AddCommand(oa)
@@ -40,8 +44,7 @@ func main() {
 
 	seed := gomvc.Seed()
 	root.AddCommand(seed)
-	seedFlags := seed.Flags()
-	setSharedFlags(seedFlags)
+	setSharedFlags(seed.Flags())
 
 	if err := root.Execute(); err != nil {
 		fmt.Println(err)
