@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -17,7 +18,7 @@ func NewCRUDActions(name string) []Action {
 		{Resource: name, Name: "Index", Method: "GET"},
 		{Resource: name, Name: "Create", Method: "POST"},
 	} {
-		action.Path = filepath.Join("/", strings.ToLower(name))
+		action.Path = filepath.Join(string(os.PathSeparator), strings.ToLower(name))
 		action.Handler = strings.Title(action.Name)
 		actions = append(actions, action)
 	}
