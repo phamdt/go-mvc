@@ -15,7 +15,7 @@ import (
 // RESTful {{Name}} resource
 type {{Name}}Controller struct {
 	db  *sqlx.DB
-	log *zap.Logger
+	log *zap.SugaredLogger
 }
 
 {{#each Actions}}
