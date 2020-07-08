@@ -43,3 +43,6 @@ jobs:
 
     - name: Add resource
       run: go run cmd/gomvc/main.go resource gophers --dest ./test
+
+    - name: Build generated application
+      run: cd ./test && go build ./...
