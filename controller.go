@@ -2,14 +2,17 @@ package gomvc
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"path/filepath"
 	"strings"
 
 	"github.com/iancoleman/strcase"
+	"golang.org/x/mod/modfile"
 )
 
 type ControllerData struct {
+	ModuleName     string
 	Name           string
 	PluralName     string
 	Path           string
@@ -25,6 +28,13 @@ type TestPath struct {
 }
 
 func createControllerFromDefault(controllerData ControllerData, dest string) error {
+	gomodFile := filepath.Join(dest, "go.mod")
+	data, err := ioutil.ReadFile(gomodFile)
+	if err != nil {
+		panic(err)
+	}
+	moduleName := modfile.ModulePath(data)
+	controllerData.ModuleName = moduleName
 	dest = filepath.Join(dest, "controllers")
 	lowerName := strings.ToLower(strcase.ToSnake(controllerData.Name))
 	controllerPath := filepath.Join(dest, addGoExt(lowerName))
@@ -62,7 +72,6 @@ func createControllerFromDefault(controllerData ControllerData, dest string) err
 	// register the controller operations in the router
 	routerFilePath := filepath.Join(dest, "router.go")
 	AddActionViaAST(controllerData, routerFilePath, dest)
-
 	return nil
 }
 

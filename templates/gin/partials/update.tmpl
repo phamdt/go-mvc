@@ -1,6 +1,6 @@
 // Update updates a new {{Resource}} record in the database
 func (ctrl *{{Resource}}Controller) {{Name}}(c *gin.Context) {
-	m := models.{{Resource}}{}
+	m := models.{{SingularResource}}{}
 	if err := c.ShouldBindUri(&m); err != nil {
 		ctrl.log.Error("invalid {{Resource}} update request",
 			zap.Error(err),

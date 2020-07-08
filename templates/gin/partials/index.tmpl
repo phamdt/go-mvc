@@ -1,6 +1,6 @@
 // Index returns a list of {{Resource}} records
 func (ctrl *{{Resource}}Controller) {{Name}}(c *gin.Context) {
-	var results []model.{{Resource}}
+	var results []models.{{SingularResource}}
 	{{# ORM }}
 	q := c.Request.URL.RawQuery
 	qms := GetQueryModFromQuery(q)

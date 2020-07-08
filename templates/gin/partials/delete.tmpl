@@ -1,6 +1,6 @@
 // Delete deletes a new {{Resource}} record into the database
 func (ctrl *{{Resource}}Controller) {{Name}}(c *gin.Context) {
-	m := models.{{Resource}}{}
+	m := models.{{SingularResource}}{}
 	if err := c.ShouldBindUri(&m); err != nil {
 		ctrl.log.Error("invalid {{Resource}} deletion request",
 			zap.Error(err),

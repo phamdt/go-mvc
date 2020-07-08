@@ -1,11 +1,11 @@
-func Test{{Name}}Controller_Create(t *testing.T) {
+func Test{{Resource}}Controller_{{Name}}(t *testing.T) {
 	tests := []struct {
 		name           string
 		path           string
 		wantStatusCode int
 	}{
 		{
-			name:           "Test creating with valid {{Name}} as body",
+			name:           "Test creating with valid {{Resource}} as body",
 			path:           "{{Path}}",
 			wantStatusCode: 201,
 		},
@@ -17,7 +17,10 @@ func Test{{Name}}Controller_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			router := GetRouter()
+			log := zap.NewExample().Sugar()
+			defer log.Sync()
+
+			router := GetRouter(log)
 
 			w := httptest.NewRecorder()
 			req, _ := http.NewRequest("POST", tt.path, nil)

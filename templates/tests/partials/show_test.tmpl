@@ -1,20 +1,20 @@
-func Test{{Name}}Controller_Show(t *testing.T) {
+func Test{{Resource}}Controller_{{Name}}(t *testing.T) {
   tests := []struct {
     name           string
     path           string
-    want           []{{Name}}
+    want           []models.{{SingularResource}}
     wantStatusCode int
   }{
     {
-      name:           "Test getting existing {{Name}}",
+      name:           "Test getting existing {{Resource}}",
       path:           "{{path}}",
-      want:           {{Name}}{},
+      want:           models.{{SingularResource}}{},
       wantStatusCode: 200,
     },
     {
-      name:           "Test getting non-existent {{Name}}",
+      name:           "Test getting non-existent {{Resource}}",
       path:           "{{path}}",
-      want:           {{Name}}{},
+      want:           models.{{SingularResource}}{},
       wantStatusCode: 200,
     },
   }

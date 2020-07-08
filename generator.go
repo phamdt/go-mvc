@@ -70,11 +70,12 @@ func (oag *Generator) CreateControllerFiles(path string, pathItem *openapi3.Path
 		}
 
 		a := Action{
-			Resource: name,
-			Method:   method,
-			Path:     path,
-			Handler:  handler,
-			Name:     operationName,
+			SingularResource: inflection.Singular(name),
+			Resource:         name,
+			Method:           method,
+			Path:             path,
+			Handler:          handler,
+			Name:             operationName,
 		}
 		data.Actions = append(data.Actions, a)
 	}

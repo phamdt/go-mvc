@@ -1,6 +1,6 @@
 // Create saves a new {{Resource}} record into the database
 func (ctrl *{{Resource}}Controller) {{Name}}(c *gin.Context) {
-	m := models.{{Resource}}{}
+	m := models.{{SingularResource}}{}
 	if err := c.ShouldBindJSON(m); err != nil {
 		ctrl.log.Error("invalid {{Resource}} creation request",
 			zap.Error(err),

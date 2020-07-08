@@ -1,7 +1,7 @@
 // Show retrieves a new {{Resource}} record from the database
 func (ctrl *{{Resource}}Controller) {{Name}}(c *gin.Context) {
 	id := c.GetInt("id")
-	var result models.{{Resource}}
+	var result models.{{SingularResource}}
 	{{# ORM }}
 	result, err := models.Find{{Resource}}(id)
 	if err != nil {

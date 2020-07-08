@@ -1,11 +1,11 @@
-func Test{{name}}Controller_Replace(t *testing.T) {
+func Test{{Resource}}Controller_{{Name}}(t *testing.T) {
 	tests := []struct {
 		name           string
 		path           string
 		wantStatusCode int
 	}{
 		{
-			name:           "Test replacing with valid {{name}} as body",
+			name:           "Test replacing with valid {{Resource}} as body",
 			path:           "{{path}}",
 			wantStatusCode: 200,
 		},

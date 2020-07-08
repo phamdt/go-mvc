@@ -1,20 +1,20 @@
-func Test{{Name}}Controller_Index(t *testing.T) {
+func Test{{Resource}}Controller_{{Name}}(t *testing.T) {
 	tests := []struct {
 		name           string
 		path           string
-		want           []{{Name}}
+		want           []models.{{SingularResource}}
 		wantStatusCode int
 	}{
 		{
 			name:           "Test indexing without query parameters",
 			path:           "{{path}}",
-			want:           []{{Name}}{},
+			want:           []models.{{SingularResource}}{},
 			wantStatusCode: 200,
 		},
 		{
 			name:           "Test indexing with parameters",
 			path:           "{{path}}?page=2",
-			want:           []{{Name}}{},
+			want:           []models.{{SingularResource}}{},
 			wantStatusCode: 200,
 		},
 	}
