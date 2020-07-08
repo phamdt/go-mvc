@@ -1,26 +1,36 @@
-func Test{{Name}}Controller_Show(t *testing.T) {
+func Test{{Resource}}Controller_{{Name}}(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection: %s", err, mock)
+	}
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
+
   tests := []struct {
     name           string
     path           string
-    want           []{{Name}}
+    want           models.{{SingularResource}}
     wantStatusCode int
   }{
     {
-      name:           "Test getting existing {{Name}}",
+      name:           "Test getting existing {{Resource}}",
       path:           "{{path}}",
-      want:           {{Name}}{},
+      want:           models.{{SingularResource}}{},
       wantStatusCode: 200,
     },
     {
-      name:           "Test getting non-existent {{Name}}",
+      name:           "Test getting non-existent {{Resource}}",
       path:           "{{path}}",
-      want:           {{Name}}{},
+      want:           models.{{SingularResource}}{},
       wantStatusCode: 200,
     },
   }
   for _, tt := range tests {
     t.Run(tt.name, func(t *testing.T) {
-      router := GetRouter()
+			log := zap.NewExample().Sugar()
+			defer log.Sync()
+
+			router := GetRouter(log, sqlxDB)
 
       w := httptest.NewRecorder()
       req, _ := http.NewRequest("GET", tt.path, nil)

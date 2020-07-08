@@ -9,13 +9,14 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	{{/ ORM }}
 	"go.uber.org/zap"
+	"{{ModuleName}}/models"
 )
 
 // {{Name}}Controller exposes the methods for interacting with the
 // RESTful {{Name}} resource
 type {{Name}}Controller struct {
 	db  *sqlx.DB
-	log *zap.Logger
+	log *zap.SugaredLogger
 }
 
 {{#each Actions}}

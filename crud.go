@@ -9,13 +9,14 @@ import (
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/jinzhu/inflection"
 )
 
 func NewCRUDActions(name string) []Action {
 	actions := []Action{}
 	for _, action := range []Action{
-		{Resource: name, Name: "Index", Method: http.MethodGet},
-		{Resource: name, Name: "Create", Method: http.MethodPost},
+		{Resource: name, SingularResource: inflection.Singular(name), Name: "Index", Method: http.MethodGet},
+		{Resource: name, SingularResource: inflection.Singular(name), Name: "Create", Method: http.MethodPost},
 	} {
 		if strings.HasPrefix(name, "/") {
 			action.Path = strings.ToLower(name)
@@ -27,9 +28,9 @@ func NewCRUDActions(name string) []Action {
 	}
 
 	for _, detailAction := range []Action{
-		{Resource: name, Name: "Show", Method: http.MethodGet},
-		{Resource: name, Name: "Update", Method: http.MethodPut},
-		{Resource: name, Name: "Delete", Method: http.MethodDelete},
+		{Resource: name, SingularResource: inflection.Singular(name), Name: "Show", Method: http.MethodGet},
+		{Resource: name, SingularResource: inflection.Singular(name), Name: "Update", Method: http.MethodPut},
+		{Resource: name, SingularResource: inflection.Singular(name), Name: "Delete", Method: http.MethodDelete},
 	} {
 		detailAction.Path = fmt.Sprintf("/%s/:id", strings.ToLower(name))
 		detailAction.Handler = strings.Title(detailAction.Name)
@@ -39,11 +40,17 @@ func NewCRUDActions(name string) []Action {
 }
 
 type Action struct {
+	SingularResource string
+	// Resource is loosely related with what the Controller is and has many actions
 	Resource string
-	Name     string
-	Method   string `json:"method,omitempty"`
-	Path     string `json:"path,omitempty"`
-	Handler  string `json:"handler,omitempty"`
+	// Name is the function name bound to the Controller
+	Name string
+	// Method is the HTTP verb
+	Method string `json:"method,omitempty"`
+	// Path is the associated url path
+	Path string `json:"path,omitempty"`
+	// Handler is the generic resource action name e.g. Index, Create
+	Handler string `json:"handler,omitempty"`
 }
 
 type Response struct {

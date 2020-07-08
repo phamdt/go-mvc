@@ -9,6 +9,7 @@ import (
 	"github.com/aymerick/raymond"
 )
 
+// TODO there's some duplication here and in the helper registration in controller.go
 func createFileFromTemplates(template string, data interface{}, destPath string) error {
 	box := rice.MustFindBox("templates")
 	tmplString := box.MustString(template)
@@ -61,8 +62,8 @@ func createFileWithHelpers(template string, data interface{}, destPath string, h
 	for _, helper := range helpers {
 		tmpl.RegisterHelper(helper.Name, helper.Function)
 	}
-	r := tmpl.MustExec(data)
-	if err := CreateFileFromString(destPath, r); err != nil {
+	interpolated := tmpl.MustExec(data)
+	if err := CreateFileFromString(destPath, interpolated); err != nil {
 		log.Println("could not create file for", destPath)
 		return err
 	}

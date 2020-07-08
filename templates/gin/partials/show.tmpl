@@ -1,11 +1,11 @@
-// Show retrieves a new {{Name}} record from the database
-func (ctrl *{{Name}}Controller) Show(c *gin.Context) {
-	id := c.GetInt("id")
-	var result models.{{Name}}
+// Show retrieves a new {{Resource}} record from the database
+func (ctrl *{{Resource}}Controller) {{Name}}(c *gin.Context) {
+	var result models.{{SingularResource}}
 	{{# ORM }}
-	result, err := models.Find{{Name}}(id)
+	id := c.GetInt("id")
+	result, err := models.Find{{Resource}}(id)
 	if err != nil {
-		ctrl.log.Error("error retrieving {{Name}}",
+		ctrl.log.Error("error retrieving {{Resource}}",
 			zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}

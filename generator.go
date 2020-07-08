@@ -42,6 +42,7 @@ func (oag *Generator) CreateControllerFiles(path string, pathItem *openapi3.Path
 
 	var responses []Response
 	responseSet := map[string]bool{}
+
 	// collect controller methods based on specified HTTP verbs/operations
 	for method, op := range pathItem.Operations() {
 		var handler = getDefaultHandlerName(method, path)
@@ -69,10 +70,12 @@ func (oag *Generator) CreateControllerFiles(path string, pathItem *openapi3.Path
 		}
 
 		a := Action{
-			Method:  method,
-			Path:    path,
-			Handler: handler,
-			Name:    operationName,
+			SingularResource: inflection.Singular(name),
+			Resource:         name,
+			Method:           method,
+			Path:             path,
+			Handler:          handler,
+			Name:             operationName,
 		}
 		data.Actions = append(data.Actions, a)
 	}

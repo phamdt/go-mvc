@@ -1,15 +1,15 @@
-// Update updates a new {{Name}} record in the database
-func (ctrl *{{Name}}Controller) Update(c *gin.Context) {
-	m := models.{{Name}}{}
+// Update updates a new {{Resource}} record in the database
+func (ctrl *{{Resource}}Controller) {{Name}}(c *gin.Context) {
+	m := models.{{SingularResource}}{}
 	if err := c.ShouldBindUri(&m); err != nil {
-		ctrl.log.Error("invalid {{Name}} update request",
+		ctrl.log.Error("invalid {{Resource}} update request",
 			zap.Error(err),
 		)
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	if err := c.ShouldBindJSON(&m); err != nil {
-		ctrl.log.Error("invalid {{Name}} update request",
+		ctrl.log.Error("invalid {{Resource}} update request",
 			zap.Error(err),
 		)
 		c.AbortWithError(http.StatusBadRequest, err)
@@ -18,7 +18,7 @@ func (ctrl *{{Name}}Controller) Update(c *gin.Context) {
 	{{# ORM }}
 	err := m.Update(ctrl.db, boil.Infer())
 	if err != nil {
-		ctrl.log.Error("error updating {{Name}}",
+		ctrl.log.Error("error updating {{Resource}}",
 			zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}

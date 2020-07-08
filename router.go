@@ -49,14 +49,16 @@ func AddActionViaAST(data ControllerData, routerFilePath string, destDir string)
 	// delete return statement
 	fn.Body.List = fn.Body.List[:numStatements-1]
 
+	// create the controller instantiation line
 	controllerStmt := NewControllerStatement(data.Name)
 	fn.Body.List = append(fn.Body.List, controllerStmt)
 
+	// create the specific route registration line for each controller action
 	for _, action := range data.Actions {
 		routeStmt := NewRouteRegistrationStatement(action)
 		fn.Body.List = append(fn.Body.List, routeStmt)
 	}
-	// add back return to be at the end
+	// add back the removed return to be at the end
 	fn.Body.List = append(fn.Body.List, returnStatement)
 
 	// i don't know why i can't just directly write to the file
@@ -94,16 +96,17 @@ func NewRouteRegistrationStatement(action Action) *dst.ExprStmt {
 }
 
 func NewControllerStatement(resource string) *dst.AssignStmt {
+	name := fmt.Sprintf("%sCtrl", resource)
 	return &dst.AssignStmt{
 		Tok: token.DEFINE,
 		Lhs: []dst.Expr{
 			&dst.Ident{
-				Name: fmt.Sprintf("%sCtrl", resource),
+				Name: name,
 			},
 		},
 		Rhs: []dst.Expr{
 			&dst.Ident{
-				Name: fmt.Sprintf("%sController{db: db, logger: log}", strings.Title(resource)),
+				Name: fmt.Sprintf("%sController{db: db, log: log}", strings.Title(resource)),
 			},
 		},
 	}

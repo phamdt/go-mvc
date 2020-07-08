@@ -2,14 +2,17 @@ package gomvc
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"path/filepath"
 	"strings"
 
 	"github.com/iancoleman/strcase"
+	"golang.org/x/mod/modfile"
 )
 
 type ControllerData struct {
+	ModuleName     string
 	Name           string
 	PluralName     string
 	Path           string
@@ -25,24 +28,33 @@ type TestPath struct {
 }
 
 func createControllerFromDefault(controllerData ControllerData, dest string) error {
+	gomodFile := filepath.Join(dest, "go.mod")
+	data, err := ioutil.ReadFile(gomodFile)
+	if err != nil {
+		panic(err)
+	}
+	moduleName := modfile.ModulePath(data)
+	controllerData.ModuleName = moduleName
 	dest = filepath.Join(dest, "controllers")
 	lowerName := strings.ToLower(strcase.ToSnake(controllerData.Name))
 	controllerPath := filepath.Join(dest, addGoExt(lowerName))
 	helpers := []TemplateHelper{
 		{
 			Name: "whichAction",
-			Function: func(action string) string {
-				if action == "" {
-					log.Println("blank action name provided")
+			Function: func(handler string) string {
+				if handler == "" {
+					log.Println("blank handler name provided")
 					return ""
 				}
-				return methodPartial(controllerData, action, "gin")
+				actionData := findActionByHandler(controllerData.Actions, handler)
+				return methodPartial(actionData, handler, "gin")
 			},
 		},
 		{
 			Name: "whichActionTest",
-			Function: func(action string) string {
-				return methodPartial(controllerData, action+"_test", "tests")
+			Function: func(handler string) string {
+				actionData := findActionByHandler(controllerData.Actions, handler)
+				return methodPartial(actionData, handler+"_test", "tests")
 			},
 		},
 	}
@@ -60,6 +72,17 @@ func createControllerFromDefault(controllerData ControllerData, dest string) err
 	// register the controller operations in the router
 	routerFilePath := filepath.Join(dest, "router.go")
 	AddActionViaAST(controllerData, routerFilePath, dest)
-
 	return nil
+}
+
+// find specific action tied to the handler
+func findActionByHandler(actions []Action, handler string) Action {
+	var current Action
+	for _, a := range actions {
+		if a.Handler == handler {
+			current = a
+			break
+		}
+	}
+	return current
 }
