@@ -1,8 +1,8 @@
-// Delete deletes a new {{Name}} record into the database
-func (ctrl *{{Name}}Controller) Delete(c *gin.Context) {
-	m := models.{{Name}}{}
+// Delete deletes a new {{Resource}} record into the database
+func (ctrl *{{Resource}}Controller) {{Name}}(c *gin.Context) {
+	m := models.{{Resource}}{}
 	if err := c.ShouldBindUri(&m); err != nil {
-		ctrl.log.Error("invalid {{Name}} deletion request",
+		ctrl.log.Error("invalid {{Resource}} deletion request",
 			zap.Error(err),
 		)
 		c.AbortWithError(http.StatusBadRequest, err)
@@ -11,7 +11,7 @@ func (ctrl *{{Name}}Controller) Delete(c *gin.Context) {
 	{{# ORM }}
 	_, err := m.Delete(ctrl.db)
 	if err != nil {
-		ctrl.log.Error("error deleting {{Name}}",
+		ctrl.log.Error("error deleting {{Resource}}",
 			zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}

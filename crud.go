@@ -39,11 +39,16 @@ func NewCRUDActions(name string) []Action {
 }
 
 type Action struct {
+	// Resource is loosely related with what the Controller is and has many actions
 	Resource string
-	Name     string
-	Method   string `json:"method,omitempty"`
-	Path     string `json:"path,omitempty"`
-	Handler  string `json:"handler,omitempty"`
+	// Name is the function name bound to the Controller
+	Name string
+	// Method is the HTTP verb
+	Method string `json:"method,omitempty"`
+	// Path is the associated url path
+	Path string `json:"path,omitempty"`
+	// Handler is the generic resource action name e.g. Index, Create
+	Handler string `json:"handler,omitempty"`
 }
 
 type Response struct {
