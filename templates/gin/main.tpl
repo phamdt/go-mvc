@@ -32,7 +32,7 @@ func main() {
 	}
 
 	// setup router and middleware
-	router := controllers.GetRouter(log, sqlxDB)
+	router := controllers.GetRouter(log, db)
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
 	router.Use(gin.Recovery())
 
