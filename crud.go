@@ -14,9 +14,11 @@ import (
 
 func NewCRUDActions(name string) []Action {
 	actions := []Action{}
+	title := strings.Title(name)
+	singular := inflection.Singular(title)
 	for _, action := range []Action{
-		{Resource: name, SingularResource: inflection.Singular(name), Name: "Index", Method: http.MethodGet},
-		{Resource: name, SingularResource: inflection.Singular(name), Name: "Create", Method: http.MethodPost},
+		{Resource: title, SingularResource: singular, Name: "Index", Method: http.MethodGet},
+		{Resource: title, SingularResource: singular, Name: "Create", Method: http.MethodPost},
 	} {
 		if strings.HasPrefix(name, "/") {
 			action.Path = strings.ToLower(name)
@@ -28,9 +30,9 @@ func NewCRUDActions(name string) []Action {
 	}
 
 	for _, detailAction := range []Action{
-		{Resource: name, SingularResource: inflection.Singular(name), Name: "Show", Method: http.MethodGet},
-		{Resource: name, SingularResource: inflection.Singular(name), Name: "Update", Method: http.MethodPut},
-		{Resource: name, SingularResource: inflection.Singular(name), Name: "Delete", Method: http.MethodDelete},
+		{Resource: title, SingularResource: singular, Name: "Show", Method: http.MethodGet},
+		{Resource: title, SingularResource: singular, Name: "Update", Method: http.MethodPut},
+		{Resource: title, SingularResource: singular, Name: "Delete", Method: http.MethodDelete},
 	} {
 		detailAction.Path = fmt.Sprintf("/%s/:id", strings.ToLower(name))
 		detailAction.Handler = strings.Title(detailAction.Name)

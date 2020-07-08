@@ -37,7 +37,7 @@ var resource = &cobra.Command{
 		orm, _ := cmd.LocalFlags().GetString("orm")
 		path := filepath.Join("/", strings.ToLower(name))
 		controllerData := ControllerData{
-			Name:       strings.Title(inflection.Singular(name)),
+			Name:       strings.Title(name),
 			PluralName: inflection.Plural(name),
 			Path:       path,
 			Actions:    NewCRUDActions(name),
