@@ -5,8 +5,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"{{ModuleName}}/models"
+
+	"github.com/jmoiron/sqlx"
+	sqlmock "github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
 {{#each Actions}}

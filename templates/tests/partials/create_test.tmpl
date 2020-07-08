@@ -1,4 +1,11 @@
 func Test{{Resource}}Controller_{{Name}}(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection: %s", err, mock)
+	}
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
+
 	tests := []struct {
 		name           string
 		path           string
@@ -20,7 +27,7 @@ func Test{{Resource}}Controller_{{Name}}(t *testing.T) {
 			log := zap.NewExample().Sugar()
 			defer log.Sync()
 
-			router := GetRouter(log)
+			router := GetRouter(log, sqlxDB)
 
 			w := httptest.NewRecorder()
 			req, _ := http.NewRequest("POST", tt.path, nil)

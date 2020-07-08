@@ -1,8 +1,8 @@
 // Show retrieves a new {{Resource}} record from the database
 func (ctrl *{{Resource}}Controller) {{Name}}(c *gin.Context) {
-	id := c.GetInt("id")
 	var result models.{{SingularResource}}
 	{{# ORM }}
+	id := c.GetInt("id")
 	result, err := models.Find{{Resource}}(id)
 	if err != nil {
 		ctrl.log.Error("error retrieving {{Resource}}",
