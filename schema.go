@@ -70,30 +70,8 @@ func LoadSchemaObject(name string, r *openapi3.SchemaRef) SchemaObject {
 	}
 	for name, property := range o.Properties {
 		property.Required = requiredMap[name]
-		if property.Format == "" {
-			switch property.Type {
-			case "boolean":
-				property.GoType = "bool"
-			case "string":
-				property.GoType = "string"
-			case "array":
-				switch property.Items.Type {
-				case "integer":
-					property.GoType = "[]int"
-				default:
-					panic(fmt.Sprintf("%+v", property))
-				}
-			default:
-				panic(fmt.Sprintf("unsupported type: %s", property.Type))
-			}
-		} else {
-			switch property.Format {
-			case "date-time":
-				property.GoType = "date.Time"
-			default:
-				property.GoType = property.Format
-			}
-		}
+		// mutation
+		SetGoType(&property)
 		o.Properties[name] = property
 		if property.GoType == "" {
 			panic(property.Type)
@@ -101,4 +79,32 @@ func LoadSchemaObject(name string, r *openapi3.SchemaRef) SchemaObject {
 	}
 	o.Name = strcase.ToCamel(name)
 	return o
+}
+
+// SetGoType mutates the property type to determine GoType
+func SetGoType(p *Property) {
+	if p.Format == "" {
+		switch p.Type {
+		case "boolean":
+			p.GoType = "bool"
+		case "string":
+			p.GoType = "string"
+		case "array":
+			switch p.Items.Type {
+			case "integer":
+				p.GoType = "[]int"
+			default:
+				panic(fmt.Sprintf("%+v", p))
+			}
+		default:
+			panic(fmt.Sprintf("unsupported type: %s", p.Type))
+		}
+	} else {
+		switch p.Format {
+		case "date-time":
+			p.GoType = "date.Time"
+		default:
+			p.GoType = p.Format
+		}
+	}
 }
