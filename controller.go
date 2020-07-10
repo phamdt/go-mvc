@@ -28,13 +28,16 @@ type TestPath struct {
 }
 
 func createControllerFromDefault(controllerData ControllerData, dest string) error {
+	var name string
 	gomodFile := filepath.Join(dest, "go.mod")
 	data, err := ioutil.ReadFile(gomodFile)
 	if err != nil {
-		panic(err)
+		// we'll assume the file doesn't exist and guess that the directory is the module name
+		name = GetLastPathPart(dest)
+	} else {
+		name = modfile.ModulePath(data)
 	}
-	moduleName := modfile.ModulePath(data)
-	controllerData.ModuleName = moduleName
+	controllerData.ModuleName = name
 	dest = filepath.Join(dest, "controllers")
 	lowerName := strings.ToLower(strcase.ToSnake(controllerData.Name))
 	controllerPath := filepath.Join(dest, addGoExt(lowerName))
