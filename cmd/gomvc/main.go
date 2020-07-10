@@ -30,9 +30,17 @@ func main() {
 	setSharedFlags(r.Flags())
 	r.Flags().StringVarP(&orm, "orm", "o", "", "database access strategy")
 
+	m := gomvc.Model()
+	root.AddCommand(m)
+	setSharedFlags(m.Flags())
+	m.Flags().BoolP("swagger-v2", "2", false, "Swagger v2 spec path")
+	m.Flags().BoolP("openapi-v3", "3", false, "OpenAPI v3 spec path")
+	m.Flags().StringVarP(&spec, "spec", "s", "./openapi.yml", "OpenAPI spec path")
+
 	oa := gomvc.OA()
 	root.AddCommand(oa)
 	oaFlags := oa.Flags()
+
 	setSharedFlags(oaFlags)
 	oaFlags.StringVarP(&spec, "spec", "s", "./openapi.yml", "OpenAPI spec path")
 

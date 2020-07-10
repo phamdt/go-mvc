@@ -10,8 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// {{TitleName}} is the cli command that creates new {{Name}}
-var {{TitleName}} = &cobra.Command{
+var {{Name}} = &cobra.Command{
 	Use:   "{{Name}}",
 	Short: "Generate {{Name}} files",
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -39,4 +38,9 @@ var {{TitleName}} = &cobra.Command{
 			panic(err)
 		}
 	},
+}
+
+// {{TitleName}} is the cli command that creates new {{Name}}
+func {{TitleName}}() *cobra.Command {
+	return {{Name}}
 }

@@ -69,9 +69,9 @@ func init() {
 	}
 	file8 := &embedded.EmbeddedFile{
 		Filename:    "build/docker-compose.yml.tpl",
-		FileModTime: time.Unix(1587572809, 0),
+		FileModTime: time.Unix(1594307050, 0),
 
-		Content: string("version: \"3\"\nservices:\n  {{Name}}_postgres:\n    container_name: {{Name}}_db\n    hostname: {{Name}}_db\n    image: \"postgres:11\"\n    env_file: .env\n    ports:\n      - \"5432:5432\"\n# UNCOMMENT ONCE YOU HAVE MIGRATIONS\n#  {{Name}}_migrations:\n#    container_name: migrations\n#    image: migrate/migrate:v4.6.2\n#    command: [\"-path\", \"/migrations/\", \"-database\", \"postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable\", \"up\"]\n#    depends_on:\n#      - postgres\n#    env_file: .env\n#    restart: on-failure\n#    links: \n#      - postgres\n#    volumes:\n#      - ./migrations:/migrations \n#\n  {{Name}}:\n    container_name: {{Name}}\n    build:\n      context: .\n      dockerfile: Dockerfile\n    env_file: .env\n    volumes:\n      - ./:/go/src/{{Name}}\n    ports:\n      - \"8080:8080\"\n    links:\n      - {{Name}}_postgres\n\n  {{Name}}_test:\n    container_name: {{Name}}_test\n    build:\n      context: .\n      dockerfile: test.Dockerfile\n    env_file: .env\n    volumes:\n      - ./:/go/src/{{Name}}\n    ports:\n      - \"9999:9999\"\n    links:\n      - {{Name}}_postgres\n\n"),
+		Content: string("version: \"3\"\nservices:\n  {{Name}}_postgres:\n    container_name: {{Name}}_db\n    hostname: {{Name}}_db\n    image: \"postgres:11\"\n    env_file: .env\n    ports:\n      - \"5432:5432\"\n# UNCOMMENT ONCE YOU HAVE MIGRATIONS\n#  {{Name}}_migrations:\n#    container_name: migrations\n#    image: migrate/migrate:v4.6.2\n#    command: [\"-path\", \"/migrations/\", \"-database\", \"postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@{{Name}}_postgres:5432/${POSTGRES_DB}?sslmode=disable\", \"up\"]\n#    depends_on:\n#      - {{Name}}_postgres\n#    env_file: .env\n#    restart: on-failure\n#    links: \n#      - {{Name}}_postgres\n#    volumes:\n#      - ./migrations:/migrations \n#\n  {{Name}}:\n    container_name: {{Name}}\n    build:\n      context: .\n      dockerfile: Dockerfile\n    env_file: .env\n    volumes:\n      - ./:/go/src/{{Name}}\n    ports:\n      - \"8080:8080\"\n    links:\n      - {{Name}}_postgres\n\n  {{Name}}_test:\n    container_name: {{Name}}_test\n    build:\n      context: .\n      dockerfile: test.Dockerfile\n    env_file: .env\n    volumes:\n      - ./:/go/src/{{Name}}\n    ports:\n      - \"9999:9999\"\n    links:\n      - {{Name}}_postgres\n\n"),
 	}
 	file9 := &embedded.EmbeddedFile{
 		Filename:    "build/env.tpl",
@@ -99,7 +99,7 @@ func init() {
 	}
 	filee := &embedded.EmbeddedFile{
 		Filename:    "gin/main.tpl",
-		FileModTime: time.Unix(1594241592, 0),
+		FileModTime: time.Unix(1594242651, 0),
 
 		Content: string("package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"log\"\n\t\"net/http\"\n\t\"os\"\n\t\"os/signal\"\n\t\"syscall\"\n\t\"time\"\n\t\"{{Name}}/controllers\"\n\n\t\"github.com/gin-gonic/gin\"\n\t\"github.com/jmoiron/sqlx\"\n\t_ \"github.com/lib/pq\" // blank import necessary to use driver\n\tnewrelic \"github.com/newrelic/go-agent\"\n\t\"github.com/newrelic/go-agent/_integrations/nrgin/v1\"\n\t\"go.uber.org/zap\"\n)\n\nfunc main() {\n\t// construct dependencies\n\tlog := zap.NewExample().Sugar()\n\tdefer log.Sync()\n\n\t// setup database\n\tdb, err := newDb()\n\tif err != nil {\n\t\tlog.Fatalf(\"can't initialize database connection: %v\", zap.Error(err))\n\t\treturn\n\t}\n\n\t// setup router and middleware\n\trouter := controllers.GetRouter(log, db)\n\t// Recovery middleware recovers from any panics and writes a 500 if there was one.\n\trouter.Use(gin.Recovery())\n\n\t// setup monitoring only if the license key is set\n\tnrKey := os.Getenv(\"NR_LICENSE_KEY\")\n\tif nrKey != \"\" {\n\t\tnrMiddleware, err := newRelic(nrKey)\n\t\tif err != nil {\n\t\t\tlog.Fatal(\"Unexpected error setting up new relic\", zap.Error(err))\n\t\t\tpanic(err)\n\t\t}\n\t\trouter.Use(nrMiddleware)\n\t}\n\n\tsrv := &http.Server{\n\t\tAddr:    \":8080\",\n\t\tHandler: router,\n\t}\n\n\tgo func() {\n\t\t// service connections\n\t\tif err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {\n\t\t\tlog.Fatalf(\"listen: %s\\n\", zap.Error(err))\n\t\t}\n\t}()\n\n\t// Wait for interrupt signal to gracefully shutdown the server with\n\t// a timeout of 5 seconds.\n\tquit := make(chan os.Signal)\n\t// kill (no param) default send syscall.SIGTERM\n\t// kill -2 is syscall.SIGINT\n\t// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it\n\tsignal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)\n\t<-quit\n\tlog.Info(\"Shutdown Server ...\")\n\n\tctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\n\tdefer cancel()\n\tif err := srv.Shutdown(ctx); err != nil {\n\t\tlog.Fatal(\"Server Shutdown:\", zap.Error(err))\n\t}\n\t// catching ctx.Done(). timeout of 5 seconds.\n\tselect {\n\tcase <-ctx.Done():\n\t\tlog.Info(\"timeout of 5 seconds.\")\n\t}\n\tlog.Info(\"Server exiting\")\n}\n\nfunc newRelic(nrKey string) (gin.HandlerFunc, error) {\n\tcfg := newrelic.NewConfig(os.Getenv(\"APP_NAME\"), nrKey)\n\t// Creates a New Relic Application\n\tapm, err := newrelic.NewApplication(cfg)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn nrgin.Middleware(apm), nil\n}\n\nfunc newDb() (*sqlx.DB, error) {\n\tconfigString := fmt.Sprintf(\"host=%s user=%s dbname=%s password=%s\", os.Getenv(\"POSTGRES_HOST\"), os.Getenv(\"POSTGRES_USER\"), os.Getenv(\"POSTGRES_DB\"), os.Getenv(\"POSTGRES_PASSWORD\"))\n\treturn sqlx.Open(\"postgres\", configString)\n}\n"),
 	}
@@ -197,7 +197,7 @@ func init() {
 	// define dirs
 	dir5 := &embedded.EmbeddedDir{
 		Filename:   "",
-		DirModTime: time.Unix(1594235091, 0),
+		DirModTime: time.Unix(1594319091, 0),
 		ChildFiles: []*embedded.EmbeddedFile{},
 	}
 	dir6 := &embedded.EmbeddedDir{
@@ -214,7 +214,7 @@ func init() {
 	}
 	dirc := &embedded.EmbeddedDir{
 		Filename:   "gin",
-		DirModTime: time.Unix(1594239216, 0),
+		DirModTime: time.Unix(1594242651, 0),
 		ChildFiles: []*embedded.EmbeddedFile{
 			filed, // "gin/controller.tmpl"
 			filee, // "gin/main.tpl"
@@ -289,7 +289,7 @@ func init() {
 	// register embeddedBox
 	embedded.RegisterEmbeddedBox(`templates`, &embedded.EmbeddedBox{
 		Name: `templates`,
-		Time: time.Unix(1594235091, 0),
+		Time: time.Unix(1594319091, 0),
 		Dirs: map[string]*embedded.EmbeddedDir{
 			"":               dir5,
 			"build":          dir6,

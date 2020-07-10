@@ -11,13 +11,13 @@ services:
 #  {{Name}}_migrations:
 #    container_name: migrations
 #    image: migrate/migrate:v4.6.2
-#    command: ["-path", "/migrations/", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable", "up"]
+#    command: ["-path", "/migrations/", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@{{Name}}_postgres:5432/${POSTGRES_DB}?sslmode=disable", "up"]
 #    depends_on:
-#      - postgres
+#      - {{Name}}_postgres
 #    env_file: .env
 #    restart: on-failure
 #    links: 
-#      - postgres
+#      - {{Name}}_postgres
 #    volumes:
 #      - ./migrations:/migrations 
 #
