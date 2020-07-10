@@ -71,11 +71,11 @@ var application = &cobra.Command{
 
 		// gofmt
 		log.Println("running gofmt on", appDir)
-		runGoFmt(appDir)
+		RunGoFmt(appDir)
 
 		// goimports
 		log.Println("running goimports on", appDir)
-		runGoImports(appDir)
+		RunGoImports(appDir)
 
 		// go module
 		log.Println("creating go module", appName)
@@ -100,13 +100,13 @@ func getAppDir(cmd *cobra.Command, appName string) string {
 	return dest
 }
 
-func runGoFmt(appDir string) {
+func RunGoFmt(appDir string) {
 	command := exec.Command(goRooted("gofmt"), "-w", appDir)
 	runCommand(command)
 	log.Printf("Just ran gofmt subprocess %d, exiting\n", command.Process.Pid)
 }
 
-func runGoImports(appDir string) {
+func RunGoImports(appDir string) {
 	command := exec.Command(goPathed("goimports"), "-w", appDir)
 	runCommand(command)
 	log.Printf("Just ran goimports subprocess %d, exiting\n", command.Process.Pid)
