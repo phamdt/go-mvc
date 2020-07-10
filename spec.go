@@ -22,7 +22,7 @@ func LoadWithKin(specPath string) *openapi3.Swagger {
 }
 
 // LoadSwaggerV2AsV3 takes the file path of a v2 Swagger file and returns a
-// the V3 representation
+// V3 representation
 func LoadSwaggerV2AsV3(specPath string) *openapi3.Swagger {
 	swaggerSpec := openapi2.Swagger{}
 	c, err := ioutil.ReadFile(specPath)
