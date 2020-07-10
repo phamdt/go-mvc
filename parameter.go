@@ -15,7 +15,8 @@ func LoadParameterObject(name string, r *openapi3.ParameterRef) ParameterObject 
 	if err := json.Unmarshal(b, &o); err != nil {
 		panic(err)
 	}
-	SetGoType(&o.Schema)
+	goType := GetGoType(name, &o.Schema)
+	o.Schema.GoType = goType
 	return o
 }
 
@@ -31,7 +32,7 @@ func queryParamTmpl() string {
 	return `
 	package models
 	
-	type {{camelize Name}} struct
+	type {{camelize Name}} struct {
 		{{Name}} {{GoType}}
 	}
 		`

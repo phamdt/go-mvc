@@ -53,12 +53,12 @@ func (oag *Generator) CreateControllerFiles(path string, pathItem *openapi3.Path
 		} else {
 			operationName = strings.Title(op.OperationID)
 		}
-		opResponses := NewResponses(op.Responses)
 
 		// responses might not be unique across controller actions
 		// so this ensures that any associated generation happens once
 		// additionally, we only care about the error responses
 		// to generate filter functions
+		opResponses := NewResponses(op.Responses)
 		for _, r := range opResponses {
 			if r.Code < 400 {
 				continue
