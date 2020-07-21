@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TODO: consolidate this with createFileFromTemplates
 func createContentsFromTemplate(tmplPath string, data interface{}) string {
 	box := rice.MustFindBox("templates")
 	tmplString := box.MustString(tmplPath)
