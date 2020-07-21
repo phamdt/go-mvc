@@ -6,12 +6,11 @@ import (
 	"log"
 	"strings"
 
-	"github.com/hoisie/mustache"
 	"github.com/spf13/cobra"
 )
 
 var {{Name}} = &cobra.Command{
-	Use:   "{{Name}}",
+	Use:   "{{Name}}"
 	Short: "Generate {{Name}} files",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
@@ -32,10 +31,9 @@ var {{Name}} = &cobra.Command{
 			"Name":      name,
 			"TitleName": strings.Title(name),
 		}
-		r := mustache.RenderFile(templateDir, data)
 		destPath := fmt.Sprintf("%s/%s.go", ".", name)
-		if err := CreateFileFromString(destPath, r); err != nil {
-			panic(err)
+		if err := createFileFromTemplates(templateDir, data, destPath); err != nil {
+				log.Printf("error creating file for %s: %s\n", name, err.Error())
 		}
 	},
 }

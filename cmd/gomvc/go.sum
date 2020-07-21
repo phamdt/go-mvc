@@ -46,8 +46,6 @@ github.com/getkin/kin-openapi v0.15.0 h1:ilWwTKNka+tVN9fzIFGqoTFqa+GIejNuVwftB9c
 github.com/getkin/kin-openapi v0.15.0/go.mod h1:WGRs2ZMM1Q8LR1QBEwUxC6RJEfaBcD0s+pcEVXFuAjw=
 github.com/ghodss/yaml v1.0.0 h1:wQHKEahhL6wmXdzwWG11gIVCkOv05bNOh+Rxn0yngAk=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
-github.com/go-generation/go-mvc v0.0.0-20200708205910-ddff7c2428ad h1:5Qb14/QVCywo95c7TIdqZS20kzQUyDTG2rKqW0/QgA8=
-github.com/go-generation/go-mvc v0.0.0-20200708205910-ddff7c2428ad/go.mod h1:q0BHt6FJzysGbW7DF3Mkk9TRiFUZJ5c7sy6uG2mMgPo=
 github.com/go-generation/go-mvc v0.0.0-20200710151552-b0f0e464e723 h1:tXvv5gOQysl5JzNU9UUPN0GTBjMMF0c79in5xfH9Txo=
 github.com/go-generation/go-mvc v0.0.0-20200710151552-b0f0e464e723/go.mod h1:q0BHt6FJzysGbW7DF3Mkk9TRiFUZJ5c7sy6uG2mMgPo=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
