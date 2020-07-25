@@ -7,7 +7,7 @@ require (
 	github.com/GeertJohan/go.rice v1.0.0
 	github.com/aymerick/raymond v2.0.2+incompatible
 	github.com/daaku/go.zipexe v1.0.1 // indirect
-	github.com/dave/dst v0.24.0
+	github.com/dave/dst v0.25.5
 	github.com/getkin/kin-openapi v0.13.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
