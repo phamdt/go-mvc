@@ -9,25 +9,22 @@ import (
 	"github.com/aymerick/raymond"
 )
 
-// TODO there's some duplication here and in the helper registration in controller.go
-func createFileFromTemplates(template string, data interface{}, destPath string) error {
+// TODO: consolidate this with createFileFromTemplates
+func createContentsFromTemplate(tmplPath string, data interface{}) string {
 	box := rice.MustFindBox("templates")
-	tmplString := box.MustString(template)
+	tmplString := box.MustString(tmplPath)
 	tmpl, err := raymond.Parse(tmplString)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	r := tmpl.MustExec(data)
-	// TODO: remove this helper which isn't always relevant
-	tmpl.RegisterHelper("whichAction", func(action string) string {
-		log.Println("looking for HTTP action partial", action)
-		if action == "" {
-			log.Println("blank action name provided")
-			return ""
-		}
-		return methodPartial(data, action, "gin")
-	})
-	if err := CreateFileFromString(destPath, r); err != nil {
+	result := tmpl.MustExec(data)
+	return result
+}
+
+// TODO there's some duplication here and in the helper registration in controller.go
+func createFileFromTemplates(template string, data interface{}, destPath string) error {
+	content := createContentsFromTemplate(template, data)
+	if err := CreateFileFromString(destPath, content); err != nil {
 		log.Println("could not create file for", destPath)
 		return err
 	}

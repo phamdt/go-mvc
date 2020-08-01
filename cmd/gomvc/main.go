@@ -54,6 +54,10 @@ func main() {
 	root.AddCommand(seed)
 	setSharedFlags(seed.Flags())
 
+	g := gomvc.G()
+	root.AddCommand(g)
+	setSharedFlags(g.Flags())
+
 	if err := root.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -63,6 +67,5 @@ func main() {
 func setSharedFlags(flags *pflag.FlagSet) {
 	cwd, _ := os.Getwd()
 	flags.StringVarP(&dest, "dest", "d", cwd, "output of generated files")
-	flags.StringVarP(&configDir, "config", "c", "", "GoMVC configuration path")
 	flags.StringVarP(&templateDir, "templates", "t", "", "Custom template path")
 }
