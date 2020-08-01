@@ -8,22 +8,8 @@ import (
 	"log"
 	"os"
 
-	rice "github.com/GeertJohan/go.rice"
-	"github.com/aymerick/raymond"
 	"github.com/pkg/errors"
 )
-
-// TODO: consolidate this with createFileFromTemplates
-func createContentsFromTemplate(tmplPath string, data interface{}) string {
-	box := rice.MustFindBox("templates")
-	tmplString := box.MustString(tmplPath)
-	tmpl, err := raymond.Parse(tmplString)
-	if err != nil {
-		panic(err)
-	}
-	result := tmpl.MustExec(data)
-	return result
-}
 
 // CreateFileFromString takes a filepath as the destination of the file
 // to be created as well as the contents to be written to this file.
@@ -82,12 +68,20 @@ func createDirIfNotExists(dir string) {
 	}
 }
 
-func dirExists(dir string) bool {
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		log.Println(err.Error())
+func dirExists(path string) bool {
+	i, err := os.Stat(path)
+	if os.IsNotExist(err) {
 		return false
 	}
-	return true
+	return i.IsDir()
+}
+
+func fileExists(path string) bool {
+	i, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !i.IsDir()
 }
 
 func addGoExt(s string) string {
