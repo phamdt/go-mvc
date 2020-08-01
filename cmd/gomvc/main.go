@@ -56,7 +56,6 @@ func main() {
 
 	g := gomvc.G()
 	root.AddCommand(g)
-	setSharedFlags(g.Flags())
 
 	if err := root.Execute(); err != nil {
 		fmt.Println(err)

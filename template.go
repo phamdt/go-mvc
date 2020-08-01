@@ -9,11 +9,14 @@ import (
 	"github.com/aymerick/raymond"
 )
 
+type TemplateHelper struct {
+	Name     string
+	Function func(string) string
+}
+
 // TODO: consolidate this with createFileFromTemplates
 func createContentsFromTemplate(tmplPath string, data interface{}) string {
-	box := rice.MustFindBox("templates")
-	tmplString := box.MustString(tmplPath)
-	tmpl, err := raymond.Parse(tmplString)
+	tmpl, err := getTemplate(tmplPath)
 	if err != nil {
 		panic(err)
 	}
@@ -34,28 +37,21 @@ func createFileFromTemplates(template string, data interface{}, destPath string)
 // TODO: support custom templates
 func methodPartial(ctx interface{}, name string, subDir string) string {
 	name = strings.ToLower(name)
-	box := rice.MustFindBox("templates")
-	tmplDir := fmt.Sprintf("%s/partials/%s.tmpl", subDir, name)
-	t := box.MustString(tmplDir)
-	tmpl, err := raymond.Parse(t)
+	tmplPath := fmt.Sprintf("%s/partials/%s.tmpl", subDir, name)
+
+	tmpl, err := getTemplate(tmplPath)
 	if err != nil {
 		panic(err)
 	}
 	return tmpl.MustExec(ctx)
 }
 
-type TemplateHelper struct {
-	Name     string
-	Function func(string) string
-}
-
-func createFileWithHelpers(template string, data interface{}, destPath string, helpers []TemplateHelper) error {
-	box := rice.MustFindBox("templates")
-	tmplString := box.MustString(template)
-	tmpl, err := raymond.Parse(tmplString)
+func createFileWithHelpers(tmplPath string, data interface{}, destPath string, helpers []TemplateHelper) error {
+	tmpl, err := getTemplate(tmplPath)
 	if err != nil {
 		return err
 	}
+
 	for _, helper := range helpers {
 		tmpl.RegisterHelper(helper.Name, helper.Function)
 	}
@@ -65,4 +61,10 @@ func createFileWithHelpers(template string, data interface{}, destPath string, h
 		return err
 	}
 	return nil
+}
+
+func getTemplate(tmplPath string) (*raymond.Template, error) {
+	box := rice.MustFindBox("templates")
+	tmplString := box.MustString(tmplPath)
+	return raymond.Parse(tmplString)
 }

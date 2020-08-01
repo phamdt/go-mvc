@@ -68,12 +68,20 @@ func createDirIfNotExists(dir string) {
 	}
 }
 
-func dirExists(dir string) bool {
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		log.Println(err.Error())
+func dirExists(path string) bool {
+	i, err := os.Stat(path)
+	if os.IsNotExist(err) {
 		return false
 	}
-	return true
+	return i.IsDir()
+}
+
+func fileExists(path string) bool {
+	i, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !i.IsDir()
 }
 
 func addGoExt(s string) string {
