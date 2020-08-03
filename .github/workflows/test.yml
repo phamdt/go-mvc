@@ -46,7 +46,7 @@ jobs:
 
     - name: Add test model
       run: |
-       echo -e "package models\n\ntype Gopher struct{}" > ./test/models/model.go
+         cp .github/models.go.test ./test/models/model.go
 
     - name: Build generated application
       run: cd ./test && go build ./...
