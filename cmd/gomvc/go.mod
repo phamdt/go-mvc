@@ -1,4 +1,4 @@
-module github.com/phamdt/go-mvc/cmd/gomvc
+module github.com/go-generation/go-mvc/cmd/gomvc
 
 go 1.14
 
