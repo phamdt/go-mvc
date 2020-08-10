@@ -13,6 +13,7 @@ import (
 
 	"github.com/getsentry/sentry-go"
   sentrygin "github.com/getsentry/sentry-go/gin"
+  "github.com/gin-contrib/pprof"
   "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -76,6 +77,15 @@ func main() {
 		}
 		router.Use(nrMiddleware)
 	}
+
+	// setup pprof server separate from application server so as to keep
+	// profiling information available only on localhost and not exposed to the
+	// internet in production
+	go func() {
+		pprofRouter := gin.Default()
+		pprof.Register(pprofRouter)
+		pprofRouter.Run(":8081")
+	}()
 
 	srv := &http.Server{
 		Addr:    ":8080",
