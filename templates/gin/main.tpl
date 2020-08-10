@@ -18,6 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // blank import necessary to use driver
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	newrelic "github.com/newrelic/go-agent"
 	"github.com/newrelic/go-agent/_integrations/nrgin/v1"
 	"go.uber.org/zap"
@@ -47,13 +48,13 @@ func main() {
 	sentryOptions := sentrygin.Options{
 		// Whether Sentry should repanic after recovery, in most cases it should be set to true,
 		// as gin.Default includes its own Recovery middleware that handles http responses.
-		Repanic:					true
+		Repanic:					true,
 		// Whether you want to block the request before moving forward with the response.
 		// Because Gin's default `Recovery` handler doesn't restart the application,
 		// it's safe to either skip this option or set it to `false`.
 		WaitForDelivery: 	false,
 		// Timeout for the event delivery requests.
-		Timeout         5 * time.Second,
+		Timeout:         5 * time.Second,
 	}
 	router.Use(sentrygin.New(sentryOptions))
 
@@ -78,13 +79,15 @@ func main() {
 		router.Use(nrMiddleware)
 	}
 
-	// setup pprof server separate from application server so as to keep
-	// profiling information available only on localhost and not exposed to the
-	// internet in production
+	// setup pprof and prometheus server separate from application server so as to
+	// keep profiling information available only on localhost and not exposed to
+	// the internet in production
 	go func() {
-		pprofRouter := gin.Default()
-		pprof.Register(pprofRouter)
-		pprofRouter.Run(":8081")
+		internalRouter := gin.Default()
+		pprof.Register(internalRouter)
+
+		pprof.Get("/metrics", gin.Wrap(promhttp.Handler))
+		internalRouter.Run(":8081")
 	}()
 
 	srv := &http.Server{
