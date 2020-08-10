@@ -13,6 +13,7 @@ import (
 
 	"github.com/getsentry/sentry-go"
   sentrygin "github.com/getsentry/sentry-go/gin"
+  "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // blank import necessary to use driver
@@ -33,11 +34,8 @@ func main() {
 		return
 	}
 
-
 	// setup router and middleware
 	router := controllers.GetRouter(log, db)
-	// Recovery middleware recovers from any panics and writes a 500 if there was one.
-	router.Use(gin.Recovery())
 
 	// setup Sentry for monitoring
 	if err := sentry.Init(sentry.ClientOptions{
@@ -58,6 +56,15 @@ func main() {
 	}
 	router.Use(sentrygin.New(sentryOptions))
 
+	// Add a ginzap middleware, which:
+	//   - Logs all requests, like a combined access and error log.
+	//   - Logs to stdout.
+	//   - RFC3339 with UTC time format.
+	router.Use(ginzap.Ginzap(log, time.RFC3339, true))
+
+	// Logs all panic to error log
+	//   - stack means whether output the stack info.
+	router.Use(ginzap.RecoveryWithZap(log, true))
 
 	// setup New Relic monitoring only if the license key is set
 	nrKey := os.Getenv("NR_LICENSE_KEY")
