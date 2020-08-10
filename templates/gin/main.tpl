@@ -11,6 +11,8 @@ import (
 	"time"
 	"{{Name}}/controllers"
 
+	"github.com/getsentry/sentry-go"
+  sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // blank import necessary to use driver
@@ -31,12 +33,33 @@ func main() {
 		return
 	}
 
+
 	// setup router and middleware
 	router := controllers.GetRouter(log, db)
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
 	router.Use(gin.Recovery())
 
-	// setup monitoring only if the license key is set
+	// setup Sentry for monitoring
+	if err := sentry.Init(sentry.ClientOptions{
+	    Dsn: "your-public-dsn",
+	}); err != nil {
+	    log.Infof("Sentry initialization failed: %v\n", err)
+	}
+	sentryOptions := sentrygin.Options{
+		// Whether Sentry should repanic after recovery, in most cases it should be set to true,
+		// as gin.Default includes its own Recovery middleware that handles http responses.
+		Repanic:					true
+		// Whether you want to block the request before moving forward with the response.
+		// Because Gin's default `Recovery` handler doesn't restart the application,
+		// it's safe to either skip this option or set it to `false`.
+		WaitForDelivery: 	false,
+		// Timeout for the event delivery requests.
+		Timeout         5 * time.Second,
+	}
+	router.Use(sentrygin.New(sentryOptions))
+
+
+	// setup New Relic monitoring only if the license key is set
 	nrKey := os.Getenv("NR_LICENSE_KEY")
 	if nrKey != "" {
 		nrMiddleware, err := newRelic(nrKey)
