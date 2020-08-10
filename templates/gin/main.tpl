@@ -26,8 +26,13 @@ import (
 
 func main() {
 	// construct dependencies
+
+	// setup app logging
 	log := zap.NewExample().Sugar()
 	defer log.Sync()
+
+	// setup request logging separately
+	requestLogger, _ := zap.NewProduction()
 
 	// setup database
 	db, err := newDb()
@@ -62,11 +67,11 @@ func main() {
 	//   - Logs all requests, like a combined access and error log.
 	//   - Logs to stdout.
 	//   - RFC3339 with UTC time format.
-	router.Use(ginzap.Ginzap(log, time.RFC3339, true))
+	router.Use(ginzap.Ginzap(requestLogger, time.RFC3339, true))
 
 	// Logs all panic to error log
 	//   - stack means whether output the stack info.
-	router.Use(ginzap.RecoveryWithZap(log, true))
+	router.Use(ginzap.RecoveryWithZap(requestLogger, true))
 
 	// setup New Relic monitoring only if the license key is set
 	nrKey := os.Getenv("NR_LICENSE_KEY")
@@ -86,7 +91,7 @@ func main() {
 		internalRouter := gin.Default()
 		pprof.Register(internalRouter)
 
-		pprof.Get("/metrics", gin.Wrap(promhttp.Handler))
+		internalRouter.Get("/metrics", gin.WrapH(promhttp.Handler))
 		internalRouter.Run(":8081")
 	}()
 
