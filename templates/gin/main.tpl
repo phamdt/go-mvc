@@ -11,9 +11,14 @@ import (
 	"time"
 	"{{Name}}/controllers"
 
+	"github.com/getsentry/sentry-go"
+  sentrygin "github.com/getsentry/sentry-go/gin"
+  "github.com/gin-contrib/pprof"
+  "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // blank import necessary to use driver
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	newrelic "github.com/newrelic/go-agent"
 	"github.com/newrelic/go-agent/_integrations/nrgin/v1"
 	"go.uber.org/zap"
@@ -21,8 +26,13 @@ import (
 
 func main() {
 	// construct dependencies
+
+	// setup app logging
 	log := zap.NewExample().Sugar()
 	defer log.Sync()
+
+	// setup request logging separately
+	requestLogger, _ := zap.NewProduction()
 
 	// setup database
 	db, err := newDb()
@@ -33,10 +43,37 @@ func main() {
 
 	// setup router and middleware
 	router := controllers.GetRouter(log, db)
-	// Recovery middleware recovers from any panics and writes a 500 if there was one.
-	router.Use(gin.Recovery())
 
-	// setup monitoring only if the license key is set
+	// setup Sentry for monitoring
+	if err := sentry.Init(sentry.ClientOptions{
+	    Dsn: "your-public-dsn",
+	}); err != nil {
+	    log.Infof("Sentry initialization failed: %v\n", err)
+	}
+	sentryOptions := sentrygin.Options{
+		// Whether Sentry should repanic after recovery, in most cases it should be set to true,
+		// as gin.Default includes its own Recovery middleware that handles http responses.
+		Repanic:					true,
+		// Whether you want to block the request before moving forward with the response.
+		// Because Gin's default `Recovery` handler doesn't restart the application,
+		// it's safe to either skip this option or set it to `false`.
+		WaitForDelivery: 	false,
+		// Timeout for the event delivery requests.
+		Timeout:         5 * time.Second,
+	}
+	router.Use(sentrygin.New(sentryOptions))
+
+	// Add a ginzap middleware, which:
+	//   - Logs all requests, like a combined access and error log.
+	//   - Logs to stdout.
+	//   - RFC3339 with UTC time format.
+	router.Use(ginzap.Ginzap(requestLogger, time.RFC3339, true))
+
+	// Logs all panic to error log
+	//   - stack means whether output the stack info.
+	router.Use(ginzap.RecoveryWithZap(requestLogger, true))
+
+	// setup New Relic monitoring only if the license key is set
 	nrKey := os.Getenv("NR_LICENSE_KEY")
 	if nrKey != "" {
 		nrMiddleware, err := newRelic(nrKey)
@@ -46,6 +83,17 @@ func main() {
 		}
 		router.Use(nrMiddleware)
 	}
+
+	// setup pprof and prometheus server separate from application server so as to
+	// keep profiling information available only on localhost and not exposed to
+	// the internet in production
+	go func() {
+		internalRouter := gin.Default()
+		pprof.Register(internalRouter)
+
+		internalRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
+		internalRouter.Run(":8081")
+	}()
 
 	srv := &http.Server{
 		Addr:    ":8080",

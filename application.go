@@ -46,7 +46,6 @@ var application = &cobra.Command{
 		// TODO: extract and allow configuration that would filter static files: e.g. not using sqlboiler
 		// render files from generic gomvc templates
 		for _, file := range []File{
-			{Template: "sqlboiler/query.go.tpl", Name: "controllers/query.go"},
 			{Template: "gin/main.tpl", Name: "main.go"},
 			{Template: "build/docker-compose.yml.tpl", Name: "docker-compose.yml"},
 			{Template: "build/env.tpl", Name: ".env"},
@@ -59,7 +58,9 @@ var application = &cobra.Command{
 			destPath := filepath.Join(destinationDir, file.Name)
 			if err := createFileFromTemplates(file.Template, data, destPath); err != nil {
 				log.Printf("error creating file for %s: %s\n", file.Name, err.Error())
+				continue
 			}
+			log.Println("created ", file.Name)
 		}
 		// render files from special gomvc templates with specific template data
 		ctrlDir := filepath.Join(destinationDir, "controllers")
