@@ -91,7 +91,7 @@ func main() {
 		internalRouter := gin.Default()
 		pprof.Register(internalRouter)
 
-		internalRouter.Get("/metrics", gin.WrapH(promhttp.Handler))
+		internalRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
 		internalRouter.Run(":8081")
 	}()
 
