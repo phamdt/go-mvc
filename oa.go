@@ -56,7 +56,7 @@ func GenerateFromOA(oa3 *openapi3.Swagger, dest, templateDir, configDir string) 
 	for path, pathItem := range oa3.Paths {
 		path = strings.Trim(path, " ")
 		log.Printf("examining path, %s\n", path)
-		if config.IsBlacklisted(path) {
+		if config.IsDenylisted(path) {
 			continue
 		}
 		if err := g.CreateControllerFiles(path, pathItem, dest, templateDir); err != nil {

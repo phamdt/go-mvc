@@ -8,8 +8,8 @@ import (
 )
 
 type GoMVCConfig struct {
-	Blacklist    []string
-	blacklistMap map[string]bool
+	Denylist    []string
+	denyListMap map[string]bool
 }
 
 // NewGoMVCConfig is a constructor for a gomvc configuration read into memory
@@ -29,18 +29,18 @@ func NewGoMVCConfig(configDir string) GoMVCConfig {
 		log.Printf("empty config: %+v", err)
 		return config
 	}
-	config.mapBlacklist()
+	config.mapDenylist()
 	return config
 }
 
-func (c *GoMVCConfig) mapBlacklist() {
-	c.blacklistMap = map[string]bool{}
-	for _, item := range c.Blacklist {
-		c.blacklistMap[item] = true
+func (c *GoMVCConfig) mapDenylist() {
+	c.denyListMap = map[string]bool{}
+	for _, item := range c.Denylist {
+		c.denyListMap[item] = true
 	}
 }
 
-func (c *GoMVCConfig) IsBlacklisted(path string) bool {
-	ok := c.blacklistMap[path]
+func (c *GoMVCConfig) IsDenylisted(path string) bool {
+	ok := c.denyListMap[path]
 	return ok
 }
