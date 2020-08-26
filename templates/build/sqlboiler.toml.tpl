@@ -5,7 +5,7 @@
   user   = "{{dbUser}}"
   pass   = "{{dbPassword}}"
   blacklist = [
-    {{#blacklist}}{{blacklist}}{{/blacklist}}
+    {{#denyList}}{{denyList}}{{/denyList}}
   ]
   sslmode = "disable"
 {{#templates}}
