@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/Fanatics/toast v0.0.1
-	github.com/GeertJohan/go.rice v1.0.0
+	github.com/GeertJohan/go.rice v1.0.2
 	github.com/aymerick/raymond v2.0.2+incompatible
 	github.com/daaku/go.zipexe v1.0.1 // indirect
 	github.com/dave/dst v0.26.2
