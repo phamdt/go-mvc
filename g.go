@@ -60,7 +60,9 @@ func GenerateFromUserTemplate(name string, templateType string) error {
 	}
 
 	if dirExists(src) {
-		handleDir(src, data)
+		if err := handleDir(src, data); err != nil {
+			return err
+		}
 	} else if fileExists(src + ".tpl") {
 		templateDir := fmt.Sprintf("%s/%s.tpl", baseTemplateDir, templateType)
 		destPath := fmt.Sprintf("%s/%s.go", ".", name)
@@ -80,7 +82,9 @@ func handleDir(src string, data interface{}) error {
 	}
 	for _, f := range templates {
 		if f.IsDir() {
-			handleDir(filepath.Join(src, f.Name()), data)
+			if err := handleDir(filepath.Join(src, f.Name()), data); err != nil {
+				return err
+			}
 		}
 		templateDir := filepath.Join(src, f.Name())
 		parts := strings.Split(f.Name(), ".")

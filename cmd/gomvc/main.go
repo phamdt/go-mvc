@@ -12,7 +12,6 @@ import (
 // shared flags
 var dest string
 var spec string
-var configDir string
 var templateDir string
 
 // db flags
