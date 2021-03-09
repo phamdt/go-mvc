@@ -1,6 +1,6 @@
 module github.com/go-generation/go-mvc
 
-go 1.14
+go 1.16
 
 require (
 	github.com/Fanatics/toast v0.0.1
