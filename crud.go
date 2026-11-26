@@ -62,10 +62,13 @@ type Response struct {
 }
 
 // NewResponses creates a list of responses from an OA3 response ref
-func NewResponses(specResponses map[string]*openapi3.ResponseRef) []Response {
+func NewResponses(specResponses *openapi3.Responses) []Response {
 	var responses []Response
 	responseSet := map[string]bool{}
-	for statusCode, resRef := range specResponses {
+	if specResponses == nil {
+		return responses
+	}
+	for statusCode, resRef := range specResponses.Map() {
 		r := NewResponse(statusCode, resRef)
 		if _, ok := responseSet[r.Name]; !ok {
 			responseSet[r.Name] = true
