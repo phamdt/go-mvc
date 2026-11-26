@@ -2,8 +2,6 @@ module github.com/go-generation/go-mvc
 
 go 1.26.11
 
-toolchain go1.26.11
-
 require (
 	github.com/Fanatics/toast v0.0.1
 	github.com/GeertJohan/go.rice v1.0.2
