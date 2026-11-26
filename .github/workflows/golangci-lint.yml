@@ -19,7 +19,8 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.1
+          version: latest
+          install-mode: goinstall
           
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
