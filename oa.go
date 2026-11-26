@@ -44,7 +44,7 @@ var oa = &cobra.Command{
 }
 
 // GenerateFromOA is the primary logic for the oa command, creating controllers
-func GenerateFromOA(oa3 *openapi3.Swagger, dest, templateDir, configDir string) {
+func GenerateFromOA(oa3 *openapi3.T, dest, templateDir, configDir string) {
 	config := NewGoMVCConfig(configDir)
 
 	createDirIfNotExists(dest)
@@ -53,7 +53,7 @@ func GenerateFromOA(oa3 *openapi3.Swagger, dest, templateDir, configDir string) 
 
 	CreateRouter(RouteData{}, "gin/router.tpl", ctrlDest)
 	g := NewGenerator(oa3)
-	for path, pathItem := range oa3.Paths {
+	for path, pathItem := range oa3.Paths.Map() {
 		path = strings.Trim(path, " ")
 		log.Printf("examining path, %s\n", path)
 		if config.IsDenylisted(path) {

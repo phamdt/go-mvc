@@ -11,10 +11,10 @@ import (
 )
 
 // LoadWithKin loads an OpenAPI spec into memory using the kin-openapi library
-func LoadWithKin(specPath string) *openapi3.Swagger {
-	loader := openapi3.NewSwaggerLoader()
+func LoadWithKin(specPath string) *openapi3.T {
+	loader := openapi3.NewLoader()
 	loader.IsExternalRefsAllowed = true
-	oa3, err := loader.LoadSwaggerFromFile(specPath)
+	oa3, err := loader.LoadFromFile(specPath)
 	if err != nil {
 		panic(err)
 	}
@@ -23,8 +23,8 @@ func LoadWithKin(specPath string) *openapi3.Swagger {
 
 // LoadSwaggerV2AsV3 takes the file path of a v2 Swagger file and returns a
 // V3 representation
-func LoadSwaggerV2AsV3(specPath string) *openapi3.Swagger {
-	swaggerSpec := openapi2.Swagger{}
+func LoadSwaggerV2AsV3(specPath string) *openapi3.T {
+	swaggerSpec := openapi2.T{}
 	c, err := ioutil.ReadFile(specPath)
 	if err != nil {
 		panic(err)
@@ -33,7 +33,7 @@ func LoadSwaggerV2AsV3(specPath string) *openapi3.Swagger {
 	if err != nil {
 		panic(err)
 	}
-	oa3, err := openapi2conv.ToV3Swagger(&swaggerSpec)
+	oa3, err := openapi2conv.ToV3(&swaggerSpec)
 	if err != nil {
 		panic(err)
 	}

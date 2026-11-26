@@ -11,11 +11,11 @@ import (
 
 // Generator wraps functionality for reading and manipulating a single OpenAPI spec
 type Generator struct {
-	oa3 *openapi3.Swagger
+	oa3 *openapi3.T
 }
 
 // NewGenerator is a constructor for Generator
-func NewGenerator(oa3 *openapi3.Swagger) Generator {
+func NewGenerator(oa3 *openapi3.T) Generator {
 	return Generator{
 		oa3: oa3,
 	}

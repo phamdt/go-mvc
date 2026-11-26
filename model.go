@@ -27,7 +27,7 @@ var model = &cobra.Command{
 		v2, _ := cmd.LocalFlags().GetBool("swagger-v2")
 		v3, _ := cmd.LocalFlags().GetBool("openapi-v3")
 
-		var oa3 *openapi3.Swagger
+		var oa3 *openapi3.T
 		if v2 && v3 {
 			panic("you can only specify one version at a time")
 		}
