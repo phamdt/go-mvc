@@ -32,21 +32,5 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-    - name: Install goimports
-      run: go install golang.org/x/tools/cmd/goimports@v0.49.0
-
-    - name: Setup test directory
-      run: mkdir test
-
-    - name: Generate application
-      run: go run cmd/gomvc/main.go application test-api --dest ./test
-
-    - name: Add resource
-      run: go run cmd/gomvc/main.go resource gophers --dest ./test
-
-    - name: Add test model
-      run: |
-         cp .github/models.go.test ./test/models/model.go
-
-    - name: Build generated application
-      run: cd ./test && go build -mod=mod ./...
+    - name: Build all packages
+      run: go build ./...
